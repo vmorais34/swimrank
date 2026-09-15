@@ -1,1 +1,69 @@
 # swimrank
+
+Projeto desenvolvido no Projeto de Extensão VI para o parceiro Patrick Esportes.
+O objetivo é fomentar através de estratégoas interativas e motivacionais para aumentar adesão e aproveitamento, além de reduzir a taxa de abandono.
+
+## O que precisamos alinhar com o stakeholder
+
+Principalmente “regras da gamificação” antes do código. Precisamos definir, por exemplo:
+
+1. O aluno ganha pontos por presença?
+2. Por distância?
+3. Por tempo?
+4. Por completar determinada atividade?
+5. Professor pode corrigir pontos?
+6. Pode haver empate?
+7. O ranking é geral ou semanal/mensal ou semestral?
+8. Quem treina mais vezes na semana ganha mais pontos?
+
+## Funcionalidades
+
+O SwimRank V1 será composto pelas seguintes funcionalidades principais:
+Identificação do participante: no primeiro acesso, o usuário informa seu nome. A identificação será armazenada localmente para que o aplicativo possa reconhecê-lo nos acessos seguintes.
+
+**Pontuação:** cada participante possuirá uma pontuação associada às atividades registradas pelos professores.
+
+**Ranking:** os participantes poderão visualizar sua posição em relação aos demais alunos, utilizando a classificação como elemento de gamificação.
+
+**Histórico:** o sistema permitirá visualizar de forma simplificada as atividades e os resultados registrados para cada participante.
+
+**Conquistas:** determinadas condições poderão desbloquear conquistas, como atingir determinada quantidade de atividades ou uma determinada pontuação.
+
+**Gerenciamento pelos professores:** os responsáveis pelas atividades poderão registrar ou validar a participação dos alunos e seus respectivos resultados.
+
+
+#### As tecnologias inicialmente previstas são:
+1. React Native: desenvolvimento da aplicação com foco em dispositivos móveis e possibilidade de reutilização da base tecnológica em futuras versões.
+2. TypeScript: tipagem estática e maior segurança durante o desenvolvimento e manutenção do código.
+3. Node.js: execução do ambiente de backend.
+4. Express: desenvolvimento da API responsável pela comunicação entre a aplicação e o servidor.
+5. MongoDB: armazenamento dos dados da aplicação.
+6. Git/GitHub: versionamento e organização do código-fonte.
+
+
+#### Modelo de dados inicial
+O modelo inicial será estruturado de forma simples, contemplando os principais elementos necessários para o funcionamento da gamificação.
+
+  Participant
+    Participant
+    ├── id
+    ├── name
+    ├── points
+    ├── activities
+    └── achievements
+  Activity
+    Activity
+    ├── id
+    ├── participantId
+    ├── date
+    ├── type
+    ├── distance
+    ├── time
+    └── points
+  Achievement
+    Achievement
+    ├── id
+    ├── name
+    ├── description
+    ├── requirement
+    └── points
