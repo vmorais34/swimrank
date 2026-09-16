@@ -118,9 +118,9 @@ Node: 24.11.1
 - [x] Configure TypeScript
 - [x] Install Express
 - [x] Configure development server
-- [ ] Create health-check endpoint
-- [ ] Test first API request
-- [ ] Configure environment variables
+- [x] Create health-check endpoint
+- [x] Test first API request
+- [x] Configure environment variables
 
 ## 6.2 Estrutura da API
 
