@@ -60,10 +60,10 @@ Node: 24.11.1
 
 ## 4.1 Inicialização
 
-- [ ] Create folder `app`
-- [ ] Initialize React Native project
-- [ ] Configure Expo
-- [ ] Configure TypeScript
+- [x] Create folder `app`
+- [x] Initialize React Native project
+- [x] Configure Expo
+- [x] Configure TypeScript
 - [ ] Verify local development environment
 - [ ] Run first build
 - [ ] Generate first web URL
@@ -113,11 +113,11 @@ Node: 24.11.1
 
 ## 6.1 Inicialização
 
-- [ ] Create folder `backend`
-- [ ] Initialize Node.js project
-- [ ] Configure TypeScript
-- [ ] Install Express
-- [ ] Configure development server
+- [x] Create folder `backend`
+- [x] Initialize Node.js project
+- [x] Configure TypeScript
+- [x] Install Express
+- [x] Configure development server
 - [ ] Create health-check endpoint
 - [ ] Test first API request
 - [ ] Configure environment variables

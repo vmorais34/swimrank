@@ -1,0 +1,26 @@
+{
+  "name": "swimrank-backend",
+  "version": "1.0.0",
+  "description": "Projeto desenvolvido no Projeto de Extensão VI para o parceiro Patrick Esportes.\r O objetivo é fomentar através de estratégoas interativas e motivacionais para aumentar adesão e aproveitamento, além de reduzir a taxa de abandono.",
+  "homepage": "https://github.com/vmorais34/swimrank#readme",
+  "bugs": {
+    "url": "https://github.com/vmorais34/swimrank/issues"
+  },
+  "license": "ISC",
+  "author": "Vini Morais",
+  "type": "commonjs",
+  "main": "index.js",
+ "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.3",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}
