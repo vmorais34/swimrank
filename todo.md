@@ -1,19 +1,24 @@
 # SwimRank — To-do
 
+Delivery: 27 de outubro
+41 dias
+
+Node: 24.11.1
+
 ## 1. Planejamento
 
-- [ ] Definir objetivo do MVP
-- [ ] Definir escopo da V1
-- [ ] Definir o que NÃO fará parte da V1
-- [ ] Definir público-alvo
-- [ ] Levantar requisitos com professores
-- [ ] Validar fluxo de utilização com a instituição
-- [ ] Definir regras de pontuação
-- [ ] Definir regras do ranking
-- [ ] Definir regras das conquistas
-- [ ] Definir quais dados serão registrados
-- [ ] Definir indicadores de sucesso
-- [ ] Definir cronograma do desenvolvimento
+- [x] Definir objetivo do MVP
+- [x] Definir escopo da V1
+- [x] Definir o que NÃO fará parte da V1
+- [x] Definir público-alvo
+- [ ] Levantar requisitos com professores (Em paralelo)
+- [ ] Validar fluxo de utilização com a instituição (Em paralelo)
+- [ ] Definir regras de pontuação (Em paralelo)
+- [ ] Definir regras do ranking (Em paralelo)
+- [ ] Definir regras das conquistas (Em paralelo)
+- [ ] Definir quais dados serão registrados (Em paralelo)
+- [ ] Definir indicadores de sucesso (Em paralelo)
+- [x] Definir cronograma do desenvolvimento
 
 ---
 
@@ -44,13 +49,10 @@
 
 ## 3. Repository / Git
 
-- [ ] Create Git repository
-- [ ] Create `.gitignore`
-- [ ] Create `.editorconfig`
-- [ ] Definir padrão de branches
-- [ ] Definir padrão de commits
-- [ ] Create first commit
-- [ ] Create initial project structure
+- [x] Create Git repository
+- [x] Create `.gitignore`
+- [x] Create first commit
+- [x] Create initial project structure
 
 ---
 
