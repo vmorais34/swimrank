@@ -46,11 +46,12 @@ O modelo inicial será estruturado de forma simples, contemplando os principais 
 
   Participant
     Participant
-    ├── id
+    ├── _id
     ├── name
+    ├── birthdate
     ├── points
-    ├── activities
-    └── achievements
+    ├── createdAt
+    └── updatedAt
   Activity
     Activity
     ├── id

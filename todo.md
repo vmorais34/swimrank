@@ -108,7 +108,6 @@ Node: 24.11.1
 > A identificação local será utilizada apenas para reduzir a complexidade do MVP.
 
 ---
-
 # 6. Backend
 
 ## 6.1 Inicialização
@@ -124,14 +123,14 @@ Node: 24.11.1
 
 ## 6.2 Estrutura da API
 
-- [ ] Define routes
-- [ ] Define controllers
-- [ ] Define services
-- [ ] Define repositories/data access
-- [ ] Define validation
-- [ ] Define error handling
-- [ ] Define HTTP status conventions
-- [ ] Define API response pattern
+- [x] Define routes
+- [x] Define controllers
+- [x] Define services
+- [x] Define repositories/data access
+- [x] Define validation
+- [x] Define error handling
+- [x] Define HTTP status conventions
+- [x] Define API response pattern
 
 ---
 
@@ -143,17 +142,24 @@ Node: 24.11.1
 - [x] Configure connection
 - [x] Configure environment variables
 - [x] Test database connection
-- [ ] Define collections
+- [x] Define collections
 
 ## 7.2 Collections
 
 ### Participants
 
-- [ ] Define schema
-- [ ] Define unique identifier
-- [ ] Define participant name
-- [ ] Define points
-- [ ] Define timestamps
+- [x] Define schema
+
+  name       → obrigatório, 2–100 caracteres
+  birthdate  → obrigatório, Date
+  points     → começa em 0, nunca negativo
+  timestamps → createdAt + updatedAt automáticos
+  _id        → automático pelo MongoDB
+
+- [x] Define unique identifier
+- [x] Define participant name
+- [x] Define points
+- [x] Define timestamps
 
               ↓
         🚦 PONTO IDEAL
