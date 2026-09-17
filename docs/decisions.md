@@ -95,3 +95,70 @@ E o POST também faz isso.
 Não vou resolver isso agora.
 
 Depois que terminar o CRUD, usaremos um middleware validate()
+
+### Fluxo
+Participante registra
+        ↓
+Activity
+status = PENDING
+        ↓
+Professor verifica
+        ↓
+   ┌────┴────┐
+   ↓         ↓
+APPROVED   REJECTED
+   ↓
+entra no ranking
+
+
+
+
+## 3 decisões de negócio importantes:
+
+A. O que exatamente é uma Activity?
+R: qualquer atividade de natação que o participant registra no app
+
+B. Quem define o type do treino principal?
+
+Professor define:
+Ex: Semana 38
+→ treino principal = CRAWL
+
+C. Como vocês definem presença?
+R: Aluno registra atividade e professor valida; a validação conta como presença.
+
+                    ┌──────────────┐
+                    │  Participant │
+                    └──────┬───────┘
+                           │
+                           │ registra
+                           ↓
+                    ┌──────────────┐
+                    │   Activity   │
+                    └──────┬───────┘
+                           │
+                           │ Validado pelo
+                           ↓
+                    ┌──────────────┐
+                    │   Training   │ Registrado pelo Professor
+                    └──────────────┘
+
+                    ┌──────────────┐
+                    │ Achievement  │
+                    └──────┬───────┘
+                           │
+                           ↓
+              ┌────────────────────────┐
+              │ ParticipantAchievement │
+              └────────────────────────┘
+
+Training = treino oficial definido pelo professor para aquela semana.
+Activity = atividade que o aluno realizou e registrou no app.
+
+Training
+    ↓
+define regra do ranking
+
+Activity
+    ↓
+registra o que o aluno fez
