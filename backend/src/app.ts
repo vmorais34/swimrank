@@ -1,19 +1,43 @@
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
-dotenv.config();
+import { connectDatabase } from './config/database';
 
 const app = express();
 
-const PORT = Number(process.env.PORT) || 3000;
+app.use(express.json());
 
 app.get('/health', (_req, res) => {
-  res.status(200).json({
-    status: 'ok',
+  const databaseStatus =
+    mongoose.connection.readyState === 1
+      ? 'connected'
+      : 'disconnected';
+
+  const status = databaseStatus === 'connected'
+    ? 'ok'
+    : 'error';
+
+  res.status(status === 'ok' ? 200 : 503).json({
+    status,
     service: 'swimrank-api',
+    database: databaseStatus,
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`SwimRank API running on http://localhost:${PORT}`);
-});
+const PORT = Number(process.env.PORT) || 3000;
+
+async function startServer(): Promise<void> {
+  try {
+    await connectDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`API rodando em http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Erro ao iniciar a aplicação:', error);
+    process.exit(1);
+  }
+}
+
+startServer();

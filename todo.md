@@ -64,7 +64,7 @@ Node: 24.11.1
 - [x] Initialize React Native project
 - [x] Configure Expo
 - [x] Configure TypeScript
-- [ ] Verify local development environment
+- [x] Verify local development environment
 - [ ] Run first build
 - [ ] Generate first web URL
 - [ ] Verify application on mobile browser
@@ -139,10 +139,10 @@ Node: 24.11.1
 
 ## 7.1 MongoDB
 
-- [ ] Create MongoDB database
-- [ ] Configure connection
-- [ ] Configure environment variables
-- [ ] Test database connection
+- [x] Create MongoDB database
+- [x] Configure connection
+- [x] Configure environment variables
+- [x] Test database connection
 - [ ] Define collections
 
 ## 7.2 Collections
@@ -155,6 +155,11 @@ Node: 24.11.1
 - [ ] Define points
 - [ ] Define timestamps
 
+              ↓
+        🚦 PONTO IDEAL
+        COMEÇAR FRONT
+
+              ↓
 ### Activities
 
 - [ ] Define schema
