@@ -81,3 +81,17 @@ Controller
 └── HTTP
 
 Muito melhor.
+
+--
+
+### Uma observação arquitetural
+Percebi que o GET está começando a repetir isso:
+
+if (!result.success) {
+  return res.status(400).json(...)
+}
+
+E o POST também faz isso.
+Não vou resolver isso agora.
+
+Depois que terminar o CRUD, usaremos um middleware validate()
