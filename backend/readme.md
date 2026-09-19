@@ -41,4 +41,13 @@ Invoke-RestMethod `
   }
 ]
 
+## Patch training
+Invoke-RestMethod `
+  -Method Patch `
+  -Uri http://localhost:3000/trainings/6aaef93245ea2c51ef90866f `
+  -ContentType "application/json" `
+  -Body '{"date":"2026-10-05","isMain":true}'
 
+Invoke-RestMethod `
+  -Method Delete `
+  -Uri http://localhost:3000/trainings/6aaef93245ea2c51ef90866f

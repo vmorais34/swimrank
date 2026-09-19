@@ -5,13 +5,15 @@ import mongoose from 'mongoose';
 import { connectDatabase } from './config/database';
 
 import participantRouter from './routes/participant.routes';
+import trainingRouter from './routes/training.routes';
+
 import { errorHandler } from './middlewares/error-handler';
 
 const app = express();
 
 app.use(express.json());
 app.use('/participants', participantRouter);
-
+app.use('/trainings', trainingRouter);
 app.use(errorHandler);
 
 app.get('/health', (_req, res) => {

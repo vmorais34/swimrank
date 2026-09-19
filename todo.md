@@ -132,7 +132,6 @@ Node: 24.11.1
 - [x] Define HTTP status conventions
 - [x] Define API response pattern
 
----
 
 # 7. Database
 
@@ -150,39 +149,93 @@ Node: 24.11.1
 
 - [x] Define schema
 
-  name       → obrigatório, 2–100 caracteres
-  birthdate  → obrigatório, Date
-  points     → começa em 0, nunca negativo
-  timestamps → createdAt + updatedAt automáticos
-  _id        → automático pelo MongoDB
+  name        → obrigatório, 2–100 caracteres
+  birthdate   → obrigatório, Date
+  points      → começa em 0, nunca negativo
+  timestamps  → createdAt + updatedAt automáticos
+  _id         → automático pelo MongoDB
 
 - [x] Define unique identifier
 - [x] Define participant name
 - [x] Define points
 - [x] Define timestamps
 
-              ↓
-        🚦 PONTO IDEAL
-        COMEÇAR FRONT
 
-              ↓
 ### Activities
 
-- [ ] Define schema
+- [x] Define schema
+
+  _id         → automático pelo MongoDB
+  participantId → referência ao Participant
+  date        → data da atividade
+  type        → tipo definido pelo participante
+  distance    → distância registrada
+  time        → tempo registrado
+  points      → pontos calculados pelo sistema
+  status      → PENDING | APPROVED | REJECTED
+  validatedAt → preenchido após validação
+  createdAt   → automático
+  updatedAt   → automático
+
 - [ ] Define participant reference
 - [ ] Define date
 - [ ] Define activity type
 - [ ] Define distance
 - [ ] Define time
 - [ ] Define points
+- [ ] Define validation status
+- [ ] Define validation timestamp
+
+
+### Trainings
+
+- [x] Define schema
+
+  _id         → automático pelo MongoDB
+  date        → data do treino principal
+  type        → tipo definido pelo professor
+  isMain      → identifica o treino principal
+  createdAt   → automático
+  updatedAt   → automático
+
+- [x] Define training type
+- [x] Define training date
+- [x] Define `isMain`
+- [x] Define timestamps
+
 
 ### Achievements
 
 - [ ] Define schema
+
+  _id         → automático pelo MongoDB
+  name        → nome da conquista
+  description → descrição
+  requirement → condição para desbloqueio
+  points      → recompensa
+
 - [ ] Define achievement name
 - [ ] Define description
 - [ ] Define requirement
+- [ ] Define requirement types
 - [ ] Define points/reward
+
+
+### ParticipantAchievements
+
+- [ ] Define schema
+
+  _id           → automático pelo MongoDB
+  participantId → referência ao Participant
+  achievementId → referência ao Achievement
+  unlockedAt    → data do desbloqueio
+  createdAt     → automático
+
+- [ ] Define participant reference
+- [ ] Define achievement reference
+- [ ] Define unlock timestamp
+- [ ] Prevent duplicate achievement unlock
+
 
 ## 7.3 Database rules
 
@@ -190,35 +243,144 @@ Node: 24.11.1
 - [ ] Define indexes
 - [ ] Define required fields
 - [ ] Define validation rules
+- [ ] Define unique constraints
 - [ ] Define seed data for development
-- [ ] Test CRUD operations
+- [ ] Test database operations
 
----
 
 # 8. API — V1
 
 ## Participants
 
-- [ ] `POST /participants`
-- [ ] `GET /participants/:id`
-- [ ] `GET /participants`
-- [ ] Test participant creation
-- [ ] Test participant retrieval
+- [x] `POST /participants`
+- [x] `GET /participants/:id`
+- [x] `GET /participants`
+- [x] `PATCH /participants/:id`
+- [x] `DELETE /participants/:id`
+
+### Participant tests
+
+- [x] Test participant creation
+- [x] Test duplicate participant
+- [x] Test participant retrieval
+- [x] Test participant list
+- [x] Test participant update
+- [x] Test partial participant update
+- [x] Test invalid participant data
+- [x] Test participant deletion
+- [x] Test deletion of nonexistent participant
+
+
+## Trainings
+
+- [ ] `POST /trainings`
+- [ ] `GET /trainings`
+- [ ] `GET /trainings/:id`
+- [ ] `PATCH /trainings/:id`
+- [ ] `DELETE /trainings/:id`
+
+### Training tests
+
+- [ ] Test training creation
+- [ ] Test training retrieval
+- [ ] Test training update
+- [ ] Test training deletion
+- [ ] Test `isMain` rule
+- [ ] Prevent multiple main trainings for the same period
+
 
 ## Activities
 
 - [ ] `POST /activities`
+- [ ] `GET /activities/:id`
 - [ ] `GET /participants/:id/activities`
+- [ ] `PATCH /activities/:id`
 - [ ] Test activity creation
 - [ ] Test activity retrieval
+- [ ] Test activity list
+- [ ] Test activity validation
+- [ ] Test rejected activity
 
-## Points
 
-- [ ] Define point calculation
+## Activity Validation
+
+- [ ] Create PENDING activity
+- [ ] Create activity approval flow
+- [ ] Create activity rejection flow
+- [ ] Set `validatedAt` when approved
+- [ ] Prevent rejected activities from ranking
+- [ ] Prevent pending activities from ranking
+
+
+# 9. Points & Ranking
+
+## 9.1 Point calculation
+
+- [ ] Define point calculation rules
+- [ ] Define main training matching rule
+- [ ] Calculate points only for approved activities
+- [ ] Calculate points only when activity type matches main training type
+- [ ] Define partial/full class scoring
+- [ ] Define weekly bonus
+- [ ] Define absence rule
 - [ ] Create point registration flow
 - [ ] Prevent participant from directly modifying points
 - [ ] Test point calculation
 - [ ] Test point persistence
+
+
+## 9.2 Ranking
+
+- [ ] Define main points ranking
+- [ ] Define distance ranking
+- [ ] Define attendance ranking
+- [ ] Return participant position
+- [ ] Return ranking participants
+- [ ] Exclude PENDING activities
+- [ ] Exclude REJECTED activities
+- [ ] Test ranking calculation
+
+
+# 10. Achievements
+
+- [ ] Create achievement
+- [ ] List achievements
+- [ ] Get achievement
+- [ ] Define achievement requirements
+- [ ] Create achievement unlock flow
+- [ ] Prevent duplicate achievement unlock
+- [ ] Register participant achievement
+- [ ] List participant achievements
+- [ ] Test achievement calculation
+
+
+# 11. Frontend — V1
+
+## Participants
+
+- [ ] Create participant registration screen
+- [ ] Connect registration form to API
+- [ ] Create participant login
+- [ ] Connect login to API
+
+## Activities
+
+- [ ] Create activity registration screen
+- [ ] Connect activity form to API
+- [ ] Display activity history
+- [ ] Display activity status
+
+## Ranking
+
+- [ ] Create main ranking screen
+- [ ] Create distance ranking
+- [ ] Create attendance ranking
+
+## Achievements
+
+- [ ] Create achievements screen
+- [ ] Display unlocked achievements
+- [ ] Display locked achievements
 
 ## Ranking
 
@@ -440,13 +602,6 @@ Node: 24.11.1
 - [ ] Create weekly/monthly rankings
 - [ ] Create goals
 - [ ] Expand achievements
-
-## Sports data
-
-- [ ] Evaluate Garmin integration
-- [ ] Evaluate Strava integration
-- [ ] Evaluate automatic activity import
-- [ ] Evaluate performance metrics
 
 ## Notifications
 
