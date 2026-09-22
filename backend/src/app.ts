@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 
 import { connectDatabase } from './config/database';
 
+import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
 import participantRouter from './routes/participant.routes';
 import trainingRouter from './routes/training.routes';
@@ -18,6 +19,7 @@ app.use('/users', userRouter);
 app.use('/participants', participantRouter);
 app.use('/trainings', trainingRouter);
 app.use('/activities', activityRouter);
+app.use('/auth', authRouter);
 app.use(errorHandler);
 
 app.get('/health', (_req, res) => {
