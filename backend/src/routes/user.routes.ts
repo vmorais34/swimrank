@@ -1,5 +1,8 @@
 import { Router } from 'express';
 
+import { authenticate } from '../middlewares/authenticate';
+import { authorize } from '../middlewares/authorize';
+
 import {
   createUser,
   getUserById,
@@ -10,14 +13,39 @@ import {
 
 const userRouter = Router();
 
-userRouter.post('/', createUser);
+userRouter.post(
+  '/',
+  authenticate,
+  authorize('ADMIN'),
+  createUser
+);
 
-userRouter.get('/', getAllUsers);
+userRouter.get(
+  '/',
+  authenticate,
+  authorize('ADMIN'),
+  getAllUsers
+);
 
-userRouter.get('/:id', getUserById);
+userRouter.get(
+  '/:id',
+  authenticate,
+  authorize('ADMIN'),
+  getUserById
+);
 
-userRouter.patch('/:id', updateUser);
+userRouter.patch(
+  '/:id',
+  authenticate,
+  authorize('ADMIN'),
+  updateUser
+);
 
-userRouter.delete('/:id', deleteUser);
+userRouter.delete(
+  '/:id',
+  authenticate,
+  authorize('ADMIN'),
+  deleteUser
+);
 
 export default userRouter;
