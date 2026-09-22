@@ -17,6 +17,10 @@ interface UpdateActivityData {
   time?: number;
 }
 
+interface ValidateActivityData {
+  status: 'APPROVED' | 'REJECTED';
+}
+
 // Valida participante antes de criar
 export async function createActivity(
   data: CreateActivityData
@@ -98,4 +102,36 @@ export async function deleteActivity(id: string) {
       'ACTIVITY_NOT_FOUND'
     );
   }
+}
+
+export async function validateActivity(
+  id: string,
+  data: ValidateActivityData
+) {
+  const existingActivity =
+    await activityRepository.findActivityById(id);
+
+  if (!existingActivity) {
+    throw new AppError(
+      'Atividade não encontrada',
+      404,
+      'ACTIVITY_NOT_FOUND'
+    );
+  }
+
+  if (existingActivity.status !== 'PENDING') {
+    throw new AppError(
+      'A atividade já foi validada',
+      409,
+      'ACTIVITY_ALREADY_VALIDATED'
+    );
+  }
+
+  return activityRepository.validateActivity(
+    id,
+    {
+      status: data.status,
+      validatedAt: new Date(),
+    }
+  );
 }

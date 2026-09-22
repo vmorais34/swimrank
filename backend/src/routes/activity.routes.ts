@@ -7,6 +7,7 @@ import {
   getActivitiesByParticipant,
   updateActivity,
   deleteActivity,
+  validateActivity,
 } from '../controllers/activity.controller';
 
 const activityRouter = Router();
@@ -17,6 +18,12 @@ activityRouter.get(
   '/participant/:participantId',
   getActivitiesByParticipant
 );
+
+activityRouter.patch(
+  '/:id/validation',
+  validateActivity
+);
+
 activityRouter.get('/:id', getActivityById);
 
 activityRouter.patch(

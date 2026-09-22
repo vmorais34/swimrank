@@ -89,3 +89,15 @@ export const updateActivitySchema = z
         'Informe pelo menos um campo para atualizar',
     }
   );
+
+  export const validateActivitySchema = z
+  .object({
+    status: z.enum(
+      ['APPROVED', 'REJECTED'],
+      {
+        message:
+          'Status deve ser APPROVED ou REJECTED',
+      }
+    ),
+  })
+  .strict();

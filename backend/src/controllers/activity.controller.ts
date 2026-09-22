@@ -7,6 +7,7 @@ import {
   activityIdSchema,
   participantIdSchema,
   updateActivitySchema,
+  validateActivitySchema,
 } from '../validations/activity.validation';
 
 export async function createActivity(
@@ -163,4 +164,41 @@ export async function deleteActivity(
   );
 
   return res.status(204).send();
+}
+
+export async function validateActivity(
+  req: Request,
+  res: Response
+) {
+  const idResult =
+    activityIdSchema.safeParse(req.params);
+
+  if (!idResult.success) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'ID da atividade inválido',
+      details: idResult.error.issues,
+    });
+  }
+
+  const bodyResult =
+    validateActivitySchema.safeParse(req.body);
+
+  if (!bodyResult.success) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'Dados inválidos',
+      details: bodyResult.error.issues,
+    });
+  }
+
+  const activity =
+    await activityService.validateActivity(
+      idResult.data.id,
+      {
+        status: bodyResult.data.status,
+      }
+    );
+
+  return res.status(200).json(activity);
 }

@@ -15,6 +15,11 @@ interface UpdateActivityData {
   time?: number;
 }
 
+interface ValidateActivityData {
+  status: 'APPROVED' | 'REJECTED';
+  validatedAt: Date;
+}
+
 export async function createActivity(
   data: CreateActivityData
 ) {
@@ -59,4 +64,18 @@ export async function updateActivity(
 
 export async function deleteActivity(id: string) {
   return Activity.findByIdAndDelete(id);
+}
+
+export async function validateActivity(
+  id: string,
+  data: ValidateActivityData
+) {
+  return Activity.findByIdAndUpdate(
+    id,
+    data,
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    }
+  );
 }
