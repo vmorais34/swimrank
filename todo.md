@@ -177,14 +177,14 @@ Node: 24.11.1
   createdAt   → automático
   updatedAt   → automático
 
-- [ ] Define participant reference
-- [ ] Define date
-- [ ] Define activity type
-- [ ] Define distance
-- [ ] Define time
-- [ ] Define points
-- [ ] Define validation status
-- [ ] Define validation timestamp
+- [x] Define participant reference
+- [x] Define date
+- [x] Define activity type
+- [x] Define distance
+- [x] Define time
+- [x] Define points
+- [x] Define validation status
+- [x] Define validation timestamp
 
 
 ### Trainings
@@ -203,6 +203,21 @@ Node: 24.11.1
 - [x] Define `isMain`
 - [x] Define timestamps
 
+
+### Users 
+
+- [x] POST /users
+- [x] Hash da senha com bcrypt
+- [x] Não expor passwordHash
+- [x] Email duplicado → 409
+- [x] GET /users
+- [x] GET /users/:id
+- [x] GET /users/:id com ID inválido
+- [x] GET /users/:id inexistente
+- [x] PATCH /users/:id
+- [x] PATCH /users/:id inexistente
+- [x] DELETE /users/:id
+- [x] DELETE /users/:id inexistente
 
 ### Achievements
 
@@ -273,41 +288,43 @@ Node: 24.11.1
 
 ## Trainings
 
-- [ ] `POST /trainings`
-- [ ] `GET /trainings`
-- [ ] `GET /trainings/:id`
-- [ ] `PATCH /trainings/:id`
-- [ ] `DELETE /trainings/:id`
+- [x] `POST /trainings`
+- [x] `GET /trainings`
+- [x] `GET /trainings/:id`
+- [x] `PATCH /trainings/:id`
+- [x] `DELETE /trainings/:id`
 
 ### Training tests
 
-- [ ] Test training creation
-- [ ] Test training retrieval
-- [ ] Test training update
-- [ ] Test training deletion
-- [ ] Test `isMain` rule
-- [ ] Prevent multiple main trainings for the same period
+- [x] Test training creation
+- [x] Test training retrieval
+- [x] Test training update
+- [x] Test training deletion
+- [x] Test `isMain` rule
+- [x] Prevent multiple main trainings for the same period
 
 
 ## Activities
 
-- [ ] `POST /activities`
-- [ ] `GET /activities/:id`
-- [ ] `GET /participants/:id/activities`
-- [ ] `PATCH /activities/:id`
-- [ ] Test activity creation
-- [ ] Test activity retrieval
-- [ ] Test activity list
-- [ ] Test activity validation
-- [ ] Test rejected activity
+- [x] `POST /activities`
+- [x] `GET /activities/:id`
+- [x] `GET /activities/participant/:participantId`
+- [x] `PATCH /activities/:id`
+- [x] Test activity creation
+- [x] Test activity retrieval
+- [x] Test activity list
+- [x] Test activity validation
+- [ ] Test unauthorized activity validation
+- [ ] Test teacher activity validation
+- [x] Test rejected activity
 
 
 ## Activity Validation
 
-- [ ] Create PENDING activity
-- [ ] Create activity approval flow
-- [ ] Create activity rejection flow
-- [ ] Set `validatedAt` when approved
+- [x] Create PENDING activity
+- [x] Create activity approval flow
+- [x] Create activity rejection flow
+- [x] Set `validatedAt` when approved
 - [ ] Prevent rejected activities from ranking
 - [ ] Prevent pending activities from ranking
 

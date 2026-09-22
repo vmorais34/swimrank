@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 
 import { connectDatabase } from './config/database';
 
+import userRouter from './routes/user.routes';
 import participantRouter from './routes/participant.routes';
 import trainingRouter from './routes/training.routes';
 import activityRouter from './routes/activity.routes';
@@ -13,6 +14,7 @@ import { errorHandler } from './middlewares/error-handler';
 const app = express();
 
 app.use(express.json());
+app.use('/users', userRouter);
 app.use('/participants', participantRouter);
 app.use('/trainings', trainingRouter);
 app.use('/activities', activityRouter);

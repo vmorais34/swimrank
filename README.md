@@ -32,6 +32,15 @@ obs: **O participante não pode alterar points diretamente.**
 #### Modelo de dados inicial
 O modelo inicial será estruturado de forma simples, contemplando os principais elementos necessários para o funcionamento da gamificação.
 
+User - Admin/Teacher
+├── _id
+├── name
+├── email
+├── passwordHash
+├── role: TEACHER | ADMIN
+├── createdAt
+└── updatedAt
+
 Participant
 ├── _id
 ├── name

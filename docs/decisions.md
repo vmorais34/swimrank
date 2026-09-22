@@ -164,6 +164,35 @@ Activity
 registra o que o aluno fez
 
 
+## Autenticação e autorização de professores
+
+Foi decidido que, embora a V1 não utilize autenticação para participantes — que continuarão sendo identificados localmente no dispositivo —, operações privilegiadas realizadas por professores não podem permanecer sem controle de acesso. A aprovação ou rejeição de atividades, assim como outras operações administrativas, deve ser executada somente por usuários autenticados com permissão adequada. Para isso, será criada uma entidade `User`, inicialmente destinada aos papéis `TEACHER` e `ADMIN`, com autenticação por credenciais e autorização baseada em papel (role). As rotas que alteram dados administrativos, como a validação de atividades e o gerenciamento dos treinamentos, serão protegidas por middleware de autenticação e autorização. A identidade do professor nunca será recebida livremente no corpo da requisição como forma de autenticação; ela será obtida a partir da sessão/token autenticado. A autenticação completa dos participantes permanece fora do escopo da V1 e fica planejada para uma versão futura, sendo essa limitação considerada no modelo de segurança do MVP.
+
+identificação local do participante ≠ autenticação/autorização do professor.
+
+Fluxo:
+                    ┌──────────────┐
+                    │     User     │
+                    │              │
+                    │ TEACHER      │
+                    │ ADMIN        │
+                    └──────┬───────┘
+                           │
+                      autenticação
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │      API     │
+                    └──────┬───────┘
+                           │
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+       Participant                    Teacher
+       operations                  operations
+             │                           │
+             ▼                           ▼
+        Activities                 Validation
+
 ## Ranking
 
   1. Não vai ter ranking por sexo.
