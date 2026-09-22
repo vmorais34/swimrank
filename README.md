@@ -3,19 +3,6 @@
 Projeto desenvolvido no Projeto de Extensão VI para o parceiro Patrick Esportes.
 O objetivo é fomentar através de estratégoas interativas e motivacionais para aumentar adesão e aproveitamento, além de reduzir a taxa de abandono.
 
-## O que precisamos alinhar com o stakeholder
-
-Principalmente “regras da gamificação” antes do código. Precisamos definir, por exemplo:
-
-1. O aluno ganha pontos por presença?
-2. Por distância?
-3. Por tempo?
-4. Por completar determinada atividade?
-5. Professor pode corrigir pontos?
-6. Pode haver empate?
-7. O ranking é geral ou semanal/mensal ou semestral?
-8. Quem treina mais vezes na semana ganha mais pontos?
-
 ## Funcionalidades
 
 O SwimRank V1 será composto pelas seguintes funcionalidades principais:
@@ -110,4 +97,4 @@ ou:
 type: "POINTS"
 target: 500
 
-Isso é uma decisão que podemos deixar para quando implementarmos Achievement.
+Isso é uma decisão que podemos deixar para quando implementar Achievement.

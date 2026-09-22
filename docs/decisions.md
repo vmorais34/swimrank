@@ -162,3 +162,26 @@ define regra do ranking
 Activity
     ↓
 registra o que o aluno fez
+
+
+## Ranking
+
+  1. Não vai ter ranking por sexo.
+
+  
+## Alinhado com o stakeholders
+
+Principalmente “regras da gamificação” antes do código.
+
+1. O aluno ganha pontos por presença? distancia, tempo?
+R: Não, será apenas pontuado a atividade principal da semana.
+1. Por completar determinada atividade?
+R: Sim, Na atividade principal da semana.
+2. Professor pode corrigir pontos?
+R: Não, sera automatico
+3. Pode haver empate?
+R: Sim
+4. O ranking é geral ou semanal/mensal ou semestral?
+R: Para a V! semanal e mensal.
+5. Quem treina mais vezes na semana ganha mais pontos?
+R: Resolvido, pontunado apenas na atividade principal da semana
