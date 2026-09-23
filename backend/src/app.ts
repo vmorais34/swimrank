@@ -10,6 +10,8 @@ import participantRouter from './routes/participant.routes';
 import trainingRouter from './routes/training.routes';
 import activityRouter from './routes/activity.routes';
 import rankingRouter from './routes/ranking.routes';
+import achievementRouter from './routes/achievement.routes';
+import participantAchievementRouter from './routes/participant-achievement.routes';
 
 import { errorHandler } from './middlewares/error-handler';
 
@@ -22,6 +24,8 @@ app.use('/trainings', trainingRouter);
 app.use('/activities', activityRouter);
 app.use('/auth', authRouter);
 app.use('/rankings', rankingRouter);
+app.use('/achievements', achievementRouter);
+app.use('/participant-achievements', participantAchievementRouter);
 app.use(errorHandler);
 
 app.get('/health', (_req, res) => {

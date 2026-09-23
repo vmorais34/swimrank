@@ -9,7 +9,7 @@ export interface JwtPayload {
 }
 
 export function authenticate(
-  req: Request,
+  req: Request<any>,
   _res: Response,
   next: NextFunction
 ) {

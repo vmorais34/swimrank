@@ -74,21 +74,20 @@ Activity
 
 
 Achievement
-├── _id
 ├── name
 ├── description
+├── category
 ├── requirement
-│   ├── type
-│   └── target
+  ├── type
+  ├── value
 └── points
-
 
 ParticipantAchievement
 ├── _id
 ├── participantId
 ├── achievementId
 ├── unlockedAt
-└── createdAt
+└── points
 
 é preciso ter:
 

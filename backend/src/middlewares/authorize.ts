@@ -12,7 +12,7 @@ export function authorize(
   ...allowedRoles: Role[]
 ) {
   return (
-    req: Request,
+    req: Request<any>,
     _res: Response,
     next: NextFunction
   ) => {
