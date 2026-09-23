@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { Activity } from '../models/Activity';
 
 interface CreateActivityData {
@@ -94,5 +95,37 @@ export async function findApprovedMainActivityByDateRange(
     },
     status: 'APPROVED',
     points: { $gt: 0 },
+  });
+}
+
+export async function getApprovedDistanceByParticipant(
+  participantId: string
+) {
+  const result = await Activity.aggregate([
+    {
+      $match: {
+        participantId: new Types.ObjectId(participantId),
+        status: 'APPROVED',
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalDistance: {
+          $sum: '$distance',
+        },
+      },
+    },
+  ]);
+
+  return result[0]?.totalDistance ?? 0;
+}
+
+export async function countApprovedActivitiesByParticipant(
+  participantId: string
+) {
+  return Activity.countDocuments({
+    participantId,
+    status: 'APPROVED',
   });
 }

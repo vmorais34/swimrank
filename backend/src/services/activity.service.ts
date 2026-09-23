@@ -4,6 +4,7 @@ import * as trainingRepository from '../repositories/training.repository';
 import { AppError } from '../errors/app-error';
 
 import { calculateActivityPoints } from './scoring.service';
+import { evaluateAchievementsForParticipant } from './achievement-engine.service';
 
 interface CreateActivityData {
   participantId: string;
@@ -168,14 +169,18 @@ export async function validateActivity(
       existingActivity.type === mainTraining.type
     ) {
       const weekEnd = new Date(weekStart);
-      weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
+
+      weekEnd.setUTCDate(
+        weekEnd.getUTCDate() + 7
+      );
 
       const existingScoredActivity =
-        await activityRepository.findApprovedMainActivityByDateRange(
-          existingActivity.participantId.toString(),
-          weekStart,
-          weekEnd
-        );
+        await activityRepository
+          .findApprovedMainActivityByDateRange(
+            existingActivity.participantId.toString(),
+            weekStart,
+            weekEnd
+          );
 
       if (existingScoredActivity) {
         throw new AppError(
@@ -191,12 +196,24 @@ export async function validateActivity(
     }
   }
 
-  return activityRepository.validateActivity(
-    id,
-    {
-      status: data.status,
-      points,
-      validatedAt: new Date(),
-    }
-  );
+  const activity =
+    await activityRepository.validateActivity(
+      id,
+      {
+        status: data.status,
+        points,
+        validatedAt: new Date(),
+      }
+    );
+
+  if (
+    data.status === 'APPROVED' &&
+    activity
+  ) {
+    await evaluateAchievementsForParticipant(
+      existingActivity.participantId.toString()
+    );
+  }
+
+  return activity;
 }

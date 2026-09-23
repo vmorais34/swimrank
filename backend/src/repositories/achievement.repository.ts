@@ -1,13 +1,14 @@
 import { Achievement } from '../models/Achievement';
+import type {
+  AchievementRequirementType,
+  AchievementRequirement,
+} from '../types/achievement';
 
 interface CreateAchievementData {
   name: string;
   description: string;
   category: string;
-  requirement: {
-    type: string;
-    value: number;
-  };
+  requirement: AchievementRequirement;
   points: number;
 }
 
@@ -15,10 +16,7 @@ interface UpdateAchievementData {
   name?: string;
   description?: string;
   category?: string;
-  requirement?: {
-    type: string;
-    value: number;
-  };
+  requirement?: AchievementRequirement;
   points?: number;
 }
 
@@ -30,8 +28,7 @@ export async function createAchievement(
 
 export async function findAllAchievements() {
   return Achievement.find().sort({
-    category: 1,
-    points: 1,
+    createdAt: -1,
   });
 }
 
@@ -39,6 +36,14 @@ export async function findAchievementById(
   id: string
 ) {
   return Achievement.findById(id);
+}
+
+export async function findAchievementsByRequirementType(
+  type: AchievementRequirementType
+) {
+  return Achievement.find({
+    'requirement.type': type,
+  });
 }
 
 export async function updateAchievement(

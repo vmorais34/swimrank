@@ -1,15 +1,19 @@
 import * as z from 'zod';
 
+const achievementRequirementTypes = [
+  'FIRST_ACTIVITY',
+  'TOTAL_DISTANCE',
+  'RANKING_POSITION',
+  'PARTICIPATION_MONTHS',
+] as const;
+
 const requirementSchema = z
   .object({
-    type: z
-      .string()
-      .trim()
-      .min(1, 'Tipo da regra é obrigatório'),
-
-    value: z
-      .number()
-      .min(0, 'Valor da regra não pode ser negativo'),
+    type: z.enum(achievementRequirementTypes),
+    value: z.number().min(
+      0,
+      'Valor da regra não pode ser negativo'
+    ),
   })
   .strict();
 
@@ -18,7 +22,10 @@ export const createAchievementSchema = z
     name: z
       .string()
       .trim()
-      .min(2, 'Nome deve possuir pelo menos 2 caracteres')
+      .min(
+        2,
+        'Nome deve possuir pelo menos 2 caracteres'
+      )
       .max(100),
 
     description: z

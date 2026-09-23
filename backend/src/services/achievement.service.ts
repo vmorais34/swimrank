@@ -1,14 +1,15 @@
 import * as achievementRepository from '../repositories/achievement.repository';
 import { AppError } from '../errors/app-error';
 
+import type {
+  AchievementRequirement,
+} from '../types/achievement';
+
 interface CreateAchievementData {
   name: string;
   description: string;
   category: string;
-  requirement: {
-    type: string;
-    value: number;
-  };
+  requirement: AchievementRequirement;
   points: number;
 }
 
@@ -16,10 +17,7 @@ interface UpdateAchievementData {
   name?: string;
   description?: string;
   category?: string;
-  requirement?: {
-    type: string;
-    value: number;
-  };
+  requirement?: AchievementRequirement;
   points?: number;
 }
 

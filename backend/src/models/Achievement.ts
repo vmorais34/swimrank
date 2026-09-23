@@ -1,6 +1,25 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, type HydratedDocument } from 'mongoose';
+import type {
+  AchievementRequirementType,
+} from '../types/achievement';
 
-const achievementSchema = new Schema(
+export interface IAchievement {
+  name: string;
+  description: string;
+  category: string;
+
+  requirement: {
+    type: AchievementRequirementType;
+    value: number;
+  };
+
+  points: number;
+
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const achievementSchema = new Schema<IAchievement>(
   {
     name: {
       type: String,
@@ -28,7 +47,12 @@ const achievementSchema = new Schema(
       type: {
         type: String,
         required: true,
-        trim: true,
+        enum: [
+          'FIRST_ACTIVITY',
+          'TOTAL_DISTANCE',
+          'RANKING_POSITION',
+          'PARTICIPATION_MONTHS',
+        ],
       },
 
       value: {
@@ -49,7 +73,10 @@ const achievementSchema = new Schema(
   }
 );
 
-export const Achievement = model(
+export const Achievement = model<IAchievement>(
   'Achievement',
   achievementSchema
 );
+
+export type AchievementDocument =
+  HydratedDocument<IAchievement>;

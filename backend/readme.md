@@ -101,3 +101,91 @@ Invoke-RestMethod `
     -Body '{
       "status": "APPROVED"
     }'
+
+
+## Achievements
+primeiro loga como admin
+$loginAdmin = Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/login" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{
+    "email": "admin@swimrank.com",
+    "password": "123456"
+  }'
+
+$adminToken = $loginAdmin.token
+
+$adminToken
+
+1. Criar conquistas
+$body = @{
+    name = "Primeira Braçada"
+    description = "Registre sua primeira atividade de natação."
+    category = "FIRST_STEPS"
+    requirement = @{
+        type = "FIRST_ACTIVITY"
+        value = 1
+    }
+    points = 100
+} | ConvertTo-Json
+
+$achievement1 = Invoke-RestMethod `
+  -Uri "http://localhost:3000/achievements" `
+  -Method POST `
+  -Headers @{
+    Authorization = "Bearer $adminToken"
+  } `
+  -ContentType "application/json" `
+  -Body $body
+
+$achievement1 | ConvertTo-Json -Depth 10
+
+2. Listar conquistas
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/achievements" `
+  -Method GET |
+  ConvertTo-Json -Depth 10
+3. Buscar uma conquista
+  Invoke-RestMethod `
+    -Uri "http://localhost:3000/achievements/$achievement1Id" `
+    -Method GET |
+    ConvertTo-Json -Depth 10
+4. Alterar
+$body = @{
+    description = "Registre e tenha sua primeira atividade de natação aprovada."
+    points = 120
+} | ConvertTo-Json
+
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/achievements/$achievement1Id" `
+  -Method PATCH `
+  -Headers @{
+    Authorization = "Bearer $adminToken"
+  } `
+  -ContentType "application/json" `
+  -Body $body |
+  ConvertTo-Json -Depth 10
+
+5. Criar um ParticipantAchievement
+$body = @{
+    participantId = "6aac3d15736b6e3dfccb375c"
+    achievementId = $achievement1Id
+} | ConvertTo-Json
+
+$participantAchievement = Invoke-RestMethod `
+  -Uri "http://localhost:3000/participant-achievements" `
+  -Method POST `
+  -Headers @{
+    Authorization = "Bearer $adminToken"
+  } `
+  -ContentType "application/json" `
+  -Body $body
+
+$participantAchievement | ConvertTo-Json -Depth 10
+
+6.Listar conquistas de um participante
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/participant-achievements/participant/6aac3d15736b6e3dfccb375c" `
+  -Method GET |
+  ConvertTo-Json -Depth 10
