@@ -9,6 +9,7 @@ import userRouter from './routes/user.routes';
 import participantRouter from './routes/participant.routes';
 import trainingRouter from './routes/training.routes';
 import activityRouter from './routes/activity.routes';
+import rankingRouter from './routes/ranking.routes';
 
 import { errorHandler } from './middlewares/error-handler';
 
@@ -20,6 +21,7 @@ app.use('/participants', participantRouter);
 app.use('/trainings', trainingRouter);
 app.use('/activities', activityRouter);
 app.use('/auth', authRouter);
+app.use('/rankings', rankingRouter);
 app.use(errorHandler);
 
 app.get('/health', (_req, res) => {
