@@ -17,6 +17,7 @@ interface UpdateActivityData {
 
 interface ValidateActivityData {
   status: 'APPROVED' | 'REJECTED';
+  points: number;
   validatedAt: Date;
 }
 
@@ -78,4 +79,20 @@ export async function validateActivity(
       runValidators: true,
     }
   );
+}
+
+export async function findApprovedMainActivityByDateRange(
+  participantId: string,
+  startDate: Date,
+  endDate: Date
+) {
+  return Activity.findOne({
+    participantId,
+    date: {
+      $gte: startDate,
+      $lt: endDate,
+    },
+    status: 'APPROVED',
+    points: { $gt: 0 },
+  });
 }

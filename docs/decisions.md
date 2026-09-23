@@ -214,3 +214,12 @@ R: Sim
 R: Para a V! semanal e mensal.
 5. Quem treina mais vezes na semana ganha mais pontos?
 R: Resolvido, pontunado apenas na atividade principal da semana
+
+## Pontuação
+aula completa → pontuação total
+meia aula → metade
+semana sem faltas → +25%
+falta → 0
+atividade precisa estar APPROVED
+ranking considera o Training principal da semana
+atividade precisa ter o mesmo type do treinamento principal

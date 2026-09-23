@@ -1,6 +1,9 @@
 import * as activityRepository from '../repositories/activity.repository';
 import * as participantRepository from '../repositories/participant.repository';
+import * as trainingRepository from '../repositories/training.repository';
 import { AppError } from '../errors/app-error';
+
+import { calculateActivityPoints } from './scoring.service';
 
 interface CreateActivityData {
   participantId: string;
@@ -19,6 +22,27 @@ interface UpdateActivityData {
 
 interface ValidateActivityData {
   status: 'APPROVED' | 'REJECTED';
+}
+
+// Função para calcular o início da semana (segunda-feira) a partir de uma data
+function getWeekStart(date: Date) {
+  const weekStart = new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate()
+    )
+  );
+
+  const day = weekStart.getUTCDay();
+
+  const daysSinceMonday = day === 0 ? 6 : day - 1;
+
+  weekStart.setUTCDate(
+    weekStart.getUTCDate() - daysSinceMonday
+  );
+
+  return weekStart;
 }
 
 // Valida participante antes de criar
@@ -127,10 +151,51 @@ export async function validateActivity(
     );
   }
 
+  let points = 0;
+
+  if (data.status === 'APPROVED') {
+    const weekStart = getWeekStart(
+      existingActivity.date
+    );
+
+    const mainTraining =
+      await trainingRepository.findMainTrainingByDate(
+        weekStart
+      );
+
+    if (
+      mainTraining &&
+      existingActivity.type === mainTraining.type
+    ) {
+      const weekEnd = new Date(weekStart);
+      weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
+
+      const existingScoredActivity =
+        await activityRepository.findApprovedMainActivityByDateRange(
+          existingActivity.participantId.toString(),
+          weekStart,
+          weekEnd
+        );
+
+      if (existingScoredActivity) {
+        throw new AppError(
+          'O participante já possui uma atividade principal aprovada nesta semana',
+          409,
+          'MAIN_ACTIVITY_ALREADY_APPROVED'
+        );
+      }
+
+      points = calculateActivityPoints(
+        existingActivity.time
+      );
+    }
+  }
+
   return activityRepository.validateActivity(
     id,
     {
       status: data.status,
+      points,
       validatedAt: new Date(),
     }
   );

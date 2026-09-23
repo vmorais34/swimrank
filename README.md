@@ -107,3 +107,96 @@ type: "POINTS"
 target: 500
 
 Isso é uma decisão que podemos deixar para quando implementar Achievement.
+
+
+### Role 
+Resumo
+
+No SwimRank, o cadastro de usuários da API é privado: somente usuários com role: ADMIN podem criar, listar, editar ou excluir outros usuários. O primeiro administrador é criado através do seed-admin, enquanto os demais professores são criados pelo ADMIN autenticado usando POST /users. Professores (TEACHER) podem fazer login e executar as operações permitidas a esse papel, mas não podem gerenciar usuários. As senhas nunca são armazenadas em texto puro: são transformadas em passwordHash com bcrypt, e esse hash nunca é retornado pela API. Para acessar a área administrativa, basta fazer login, guardar o JWT retornado e enviá-lo como Authorization: Bearer <token> nas requisições protegidas.
+
+🔑 Primeiro ADMIN — somente se precisar recriá-lo
+npm run seed:admin
+
+As credenciais ficam no .env:
+
+ADMIN_EMAIL=admin@swimrank.com
+ADMIN_PASSWORD=123456
+
+O seed verifica se o email já existe antes de criar, então pode ser executado novamente sem duplicar o ADMIN.
+
+👨‍🏫 Criar um novo professor
+
+1. Login como ADMIN:
+
+$loginAdmin = Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/login" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{
+    "email": "admin@swimrank.com",
+    "password": "123456"
+  }'
+
+$adminToken = $loginAdmin.token
+
+2. Criar o professor:
+
+$body = @{
+    name = "Nome do Professor"
+    email = "professor@email.com"
+    password = "senha-do-professor"
+    role = "TEACHER"
+} | ConvertTo-Json
+
+Invoke-RestMethod `
+  -Uri "http://localhost:3000/users" `
+  -Method POST `
+  -Headers @{
+    Authorization = "Bearer $adminToken"
+  } `
+  -ContentType "application/json" `
+  -Body $body
+
+A resposta deve trazer id, name, email, role, etc., mas nunca passwordHash.
+
+🔐 Professor fazendo login
+
+Quando o professor precisar acessar o sistema:
+
+$loginTeacher = Invoke-RestMethod `
+  -Uri "http://localhost:3000/auth/login" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{
+    "email": "professor@email.com",
+    "password": "senha-do-professor"
+  }'
+
+$teacherToken = $loginTeacher.token
+
+Depois, nas rotas que exigem autenticação:
+
+-Headers @{
+    Authorization = "Bearer $teacherToken"
+}
+
+🧠 Fluxo para lembrar
+SEED
+  ↓
+primeiro ADMIN
+  ↓
+ADMIN faz login
+  ↓
+JWT
+  ↓
+POST /users
+  ↓
+cria TEACHER
+  ↓
+TEACHER faz login
+  ↓
+JWT
+  ↓
+acessa operações permitidas
+
+Em produção, depois ajustamos as credenciais do .env para uma senha forte e mantida fora do código/repositório.
