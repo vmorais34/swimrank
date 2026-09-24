@@ -1,123 +1,122 @@
-# SwimRank — Status do projeto (Frontend & Backend)
+# SwimRank — Status do projeto
 
-> Gerado a partir da leitura do código-fonte, `todo.md` e `docs/decisions.md` em 2026-09-23.
-> Prazo de entrega: 27/10 (41 dias a partir do início do projeto).
+> Atualizado em 2026-09-23 (fim do Bloco 1 do frontend: seções 4.1 e 4.2 do `todo.md`).
+> Entrega: **27/10**. Node 24.11.1.
 
 ---
 
-## 1. Visão geral
+## 1. Onde estamos
 
-SwimRank é um app de gamificação para natação (Projeto de Extensão VI, parceiro Patrick Esportes). Participantes registram atividades, professores validam, e o sistema calcula pontos/ranking/conquistas.
+| Área | Situação |
+|---|---|
+| Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Faltam 2 ajustes para o front (ver §4). |
+| Frontend 4.1 Inicialização | ✅ Feito (falta só validar em celular real). |
+| Frontend 4.2 Estrutura / design system | ✅ Feito e validado no navegador (tema claro e escuro). |
+| Frontend 4.3 Telas V1 | ⏳ **Próximo passo.** Por enquanto só existem placeholders "Em construção". |
+| Integração Front ↔ API (seção 11) | ⏳ Não iniciada. Os tipos das respostas já existem em `app/src/types/api.ts`. |
 
-Stack:
-- **Backend**: Node.js + TypeScript + Express 5 + Mongoose 9 (MongoDB) + Zod 4 + JWT + bcrypt — pasta `backend/`
-- **Frontend**: React Native + Expo (SDK 57) + Expo Router + TypeScript — pasta `app/`
+### Forma de trabalho combinada
+- Seguir o `todo.md` **bloco a bloco** e parar ao fim de cada bloco para validação.
+- Não começar o próximo bloco sem aprovação.
+- Marcar os checkboxes no `todo.md` quando o bloco estiver pronto.
 
-Arquitetura do backend (`docs/decisions.md`):
+---
+
+## 2. Decisões tomadas
+
+- **Temas:** claro, baseado em `.agents/references/mockup-mobile.png`, e escuro, com a paleta do `.agents/rules/DESIGN_TOKENS.md`.
+  - Segue o tema do sistema; o usuário pode escolher Sistema/Claro/Escuro, e a escolha fica salva.
+  - No tema claro, `brand.primary` = `#0369A1` para manter o contraste AA do texto branco nos botões.
+- **Login do participante (sem autenticação na V1):**
+  - Tela com **um input de data de nascimento**.
+  - Se o participante já tem cadastro, a data basta para entrar.
+  - Se não tem, pede também o **nome** e cadastra.
+  - Abaixo, um botão **"Acessar como professor"** leva para e-mail + senha (JWT via `POST /auth/login`).
+  - A tela de login do mockup (e-mail/Google) é **só referência visual**.
+- **Web:** `web.output = "single"` (SPA) no `app.json`.
+- **Fonte:** Inter (`@expo-google-fonts/inter`). **Ícones:** SVG próprios em `components/ui/icon.tsx`, estilo Lucide, stroke 2.
+
+---
+
+## 3. Frontend — o que existe (`app/`)
+
+Stack: Expo SDK 57 + Expo Router + TypeScript + React Compiler.
+Libs adicionadas: `react-native-svg`, `@react-native-async-storage/async-storage`, `@expo-google-fonts/inter`.
+
 ```
-HTTP → Route → Controller → Service → Repository → Model → MongoDB
+app/src/
+├── app/                      # rotas (Expo Router)
+│   ├── _layout.tsx           # fontes, SafeArea, ThemeProvider, Stack
+│   ├── index.tsx             # PROVISÓRIO: hub + catálogo do design system (vira Splash na 4.3)
+│   ├── (auth)/identify.tsx, teacher-login.tsx
+│   ├── (app)/_layout.tsx     # tab bar: Início / Registrar / Ranking / Perfil
+│   ├── (app)/home, register, ranking, profile, history*, achievements*   (*fora da tab bar)
+│   └── teacher/index.tsx     # área do professor (/teacher)
+├── components/
+│   ├── ui/                   # design system (barrel em ui/index.ts)
+│   └── placeholder-screen.tsx
+├── contexts/theme-context.tsx   # AppThemeProvider, useTheme(), useAppTheme()
+├── config/env.ts             # EXPO_PUBLIC_API_URL, EXPO_PUBLIC_API_TIMEOUT_MS
+├── lib/storage.ts            # wrapper JSON do AsyncStorage + StorageKeys
+├── theme/                    # colors (light/dark), typography, spacing, radius, shadows, dimensions
+├── types/api.ts              # tipos das respostas do backend
+└── hooks/use-color-scheme*.ts
 ```
 
----
+**Componentes UI:** AppText, Button, TextField, Card (default/highlight/hero), Screen, Header, Avatar, IconBadge, StatusBadge, SegmentedControl, ListRow, Logo, LoadingState, EmptyState, ErrorState, InlineMessage.
 
-## 2. Backend — o que já está feito
-
-### 2.1 Infraestrutura
-- Projeto Node/TS/Express configurado, servidor de dev (`npm run dev`), variáveis de ambiente (`.env`).
-- Endpoint `GET /health` retornando status da API e da conexão com o MongoDB.
-- Conexão com MongoDB configurada (`src/config/database.ts`).
-- Tratamento de erro centralizado: `AppError` (`src/errors/app-error.ts`) + middleware `errorHandler`, evitando try/catch espalhado nos controllers.
-
-### 2.2 Autenticação e autorização
-- Entidade `User` (roles `TEACHER` | `ADMIN`), senha com hash `bcrypt`, nunca expõe `passwordHash`.
-- `POST /auth/login` retorna JWT.
-- Middlewares `authenticate` (valida JWT) e `authorize(...roles)` (RBAC) protegendo rotas administrativas.
-- Cadastro de usuários é privado: só `ADMIN` autenticado pode criar/listar/editar/excluir usuários (`POST/GET/PATCH/DELETE /users`, todos atrás de `authenticate + authorize('ADMIN')`).
-- Primeiro ADMIN criado via script `npm run seed:admin` (idempotente, credenciais no `.env`).
-- Decisão registrada: identificação local do participante ≠ autenticação de professor/admin — participantes continuam sem login na V1.
-
-### 2.3 Entidades / CRUDs implementados
-| Entidade | Rotas | Observações |
-|---|---|---|
-| **Participants** | `POST /participants`, `GET /participants`, `GET /participants/:id`, `PATCH /participants/:id`, `DELETE /participants/:id` | schema: `name`, `birthdate`, `points` (não editável pelo cliente), timestamps. Testado (criação, duplicidade, listagem, update, delete, casos inválidos). |
-| **Trainings** | `POST/GET/GET:id/PATCH/DELETE /trainings` | schema: `date`, `type`, `isMain`. Regra "apenas um treino principal por período" implementada e testada. |
-| **Activities** | `POST /activities`, `GET /activities`, `GET /activities/:id`, `GET /activities/participant/:participantId`, `PATCH /activities/:id`, `PATCH /activities/:id/validation` (protegida: `TEACHER`/`ADMIN`) | schema: `participantId`, `date`, `type`, `distance`, `time`, `points`, `status` (`PENDING/APPROVED/REJECTED`), `validatedAt`. Fluxo de aprovação/rejeição implementado. |
-| **Users** | CRUD completo, protegido por `ADMIN` | ver seção autenticação acima. |
-
-### 2.4 Validação
-- Validação de entrada com **Zod** para as entidades acima (`src/validations/*`).
-- Observação registrada em `decisions.md`: os controllers ainda repetem o padrão `if (!result.success) return res.status(400)...` em GET e POST — refatoração para um middleware `validate()` está planejada, mas **ainda não implementada**.
-
-### 2.5 Regras de negócio já decididas (mas não implementadas em código)
-Documentadas em `docs/decisions.md`, ainda pendentes de implementação:
-- Cálculo de pontos dinâmico, isolado em um `scoring.service.ts` (ainda não existe):
-  - aula completa → 100% da pontuação base
-  - aula pela metade → 50%
-  - falta → 0
-  - presença em todos os dias da semana → bônus de 25%
-- Pontuação é feita **apenas** sobre a atividade principal da semana (definida pelo `Training.isMain`/`type`), não por presença/distância/tempo em geral.
-- Sem ranking por sexo.
-- Ranking V1: semanal e mensal (não geral).
-- Empate é permitido; professor **não** corrige pontos manualmente (cálculo é automático).
-
-### 2.6 O que falta no backend (do `todo.md`)
-- **Achievements**: schema, CRUD e regras de desbloqueio — nada implementado ainda.
-- **ParticipantAchievements**: schema e lógica de unlock (com prevenção de duplicidade) — não implementado.
-- **Regras de banco**: índices, relações formais, seeds de desenvolvimento, unique constraints — pendentes.
-- **Cálculo de pontos** (seção 9.1 do todo): nenhuma linha de código ainda; é o próximo grande bloco de trabalho.
-- **Ranking** (seção 9.2): endpoints de ranking principal, por distância, por frequência, posição do participante — nada implementado.
-- Testes pendentes: validação de atividade não autorizada, validação por professor (parcialmente coberto), exclusão de atividades `PENDING`/`REJECTED` do ranking.
+**Rodar:**
+```bash
+cd app
+npx expo start --web       # http://localhost:8081  → "/" mostra o catálogo do design system
+npx tsc --noEmit           # typecheck
+npx expo export -p web     # build web (pasta dist/)
+```
+Env: copiar `app/.env.example` para `app/.env`. Em celular físico ou emulador Android, use o IP da máquina no lugar de `localhost`.
 
 ---
 
-## 3. Frontend — o que já está feito
+## 4. Pendências no backend (necessárias antes/durante a 4.3)
 
-O app (`app/`) está **no estado inicial do template padrão do Expo Router** (`create-expo-app`), sem telas de produto ainda implementadas:
-- Projeto Expo (SDK 57) + TypeScript + Expo Router inicializado e funcional.
-- Estrutura padrão: `src/app/_layout.tsx`, `src/app/index.tsx` (tela "Welcome to SwimRank!" de boas-vindas do template), `src/app/explore.tsx`.
-- Componentes de UI base reaproveitáveis do template: `themed-text`, `themed-view`, `app-tabs` (navegação em abas), `animated-icon`, `hint-row`, `external-link`, `web-badge`, `collapsible`.
-- Hooks de tema (`use-color-scheme`, `use-theme`) e constantes de design (`constants/theme.ts` — espaçamento, cores).
-- Suporte a Web/iOS/Android/dark-mode já configurado (theming com `ThemeProvider`).
+1. **CORS:** o `backend/src/app.ts` não tem CORS, e o app web (localhost:8081) não consegue chamar a API sem isso.
+2. **Rota de identificação por data de nascimento:** hoje só existe `POST /participants`, que devolve 409 se o participante já existe.
+   - Sugestão: `POST /participants/identify { birthdate, name? }`.
+   - 0 encontrados → 404, e o front pede o nome e cadastra.
+   - 1 encontrado → devolve o participante.
+   - Mais de 1 com a mesma data → exige `name`, porque o índice único do model é `name + birthdate`.
 
-Não há nenhuma tela de produto (identificação de participante, cadastro de atividade, ranking, conquistas, admin) nem nenhuma chamada de API implementada.
+> Confirmar com o usuário antes de mexer no backend.
 
-### 3.1 O que falta no frontend (do `todo.md`)
-- **Build/deploy inicial**: primeiro build, gerar URL web, validar em navegador mobile.
-- **Estrutura do produto**: estrutura de pastas definitiva, configuração de variáveis de ambiente, design system (tipografia, spacing, botões/inputs/cards) além do que veio do template.
-- **Telas principais**: splash, identificação do participante, home, ranking, histórico de atividades, conquistas, tela básica de professor/admin — **nenhuma criada ainda**.
-- **Identificação do participante (V1, sem autenticação)**: input de nome, geração/persistência local de identificador, recuperação no startup, comportamento sem dados locais/troca de dispositivo.
-- **Integração com backend**: nenhuma — falta client de API, base URL configurável, services (participant/activity/ranking/achievement), tratamento de loading/erro/offline.
-- Telas de atividades, ranking (principal/distância/frequência) e conquistas — dependem de endpoints que também ainda não existem no backend (ranking, achievements).
-
----
-
-## 4. Panorama consolidado: o que falta fazer (a partir do `todo.md`)
-
-### Alta prioridade (bloqueiam o MVP)
-1. **Serviço de pontuação** (`scoring.service.ts`): implementar as regras já decididas (aula completa/parcial/falta, bônus semanal), aplicado só à atividade principal da semana.
-2. **Ranking**: endpoints semanal/mensal, ordenação, empate, exclusão de atividades `PENDING`/`REJECTED`.
-3. **Achievements + ParticipantAchievements**: schema, CRUD, regra de desbloqueio, prevenção de duplicidade.
-4. **Frontend — telas de produto**: identificação do participante (sem auth), cadastro/listagem de atividades, ranking, conquistas, tela de professor.
-5. **Integração frontend ↔ backend**: client HTTP, services por domínio, tratamento de erro/loading/offline.
-
-### Média prioridade
-- Regras de banco (índices, constraints únicas, seeds de dev).
-- Middleware `validate()` para eliminar a repetição de validação Zod nos controllers.
-- Testes pendentes de autorização em `PATCH /activities/:id/validation`.
-- Documentação: `README.md` do projeto ainda não cobre todos os itens do checklist (arquitetura, roadmap etc.), pastas `docs/` com requisitos funcionais/não funcionais, modelo de dados, estratégia de testes ainda não criadas como documentos formais.
-
-### Baixa prioridade / pós-MVP (V2, conforme `todo.md` seção 18)
-- Autenticação real de participantes (login, cadastro, recuperação de senha, migração da identidade local).
-- Perfil de usuário, estatísticas pessoais.
-- Gamificação expandida (níveis, desafios, rankings semanais/mensais adicionais, metas).
-- Notificações push.
-- Publicação na Google Play.
+### Endpoints que o front vai usar
+- `POST /participants`, `GET /participants/:id`
+- `POST /activities` com `{ participantId, date: 'YYYY-MM-DD', type, distance (m), time (s) }`, criada como `PENDING`
+- `GET /activities/participant/:participantId`
+- `GET /activities`; `PATCH /activities/:id/validation { status: APPROVED|REJECTED }` (Bearer TEACHER/ADMIN)
+- `GET /trainings` → treino principal da semana (`isMain`). **A atividade só pontua se `type` = tipo do treino principal.**
+- `GET /rankings/weekly|monthly?date=YYYY-MM-DD` → `{ position, participantId, name, points }`
+- `GET /rankings/general`
+- `GET /rankings/weekly/distance?date=` → `distance`; `GET /rankings/weekly/attendance?date=` → `attendance`
+- `GET /achievements`, `GET /participant-achievements/participant/:participantId`
+- `POST /auth/login { email, password }` → `{ token, user }`
+- Formato de erro: `{ error: CODE, message, details? }`
 
 ---
 
-## 5. Observações úteis para quem for continuar
+## 5. Próximos passos (em ordem)
 
-- Regra de negócio central: **o cliente nunca envia `points` diretamente** — pontos só são escritos pelo futuro serviço de pontuação.
-- Fluxo de atividade: `Participant registra → Activity (PENDING) → Professor valida → APPROVED (entra no ranking) | REJECTED`.
-- Autenticação de professor/admin é via JWT (`Authorization: Bearer <token>`); participantes seguem sem login na V1.
-- Exemplos de chamadas via PowerShell (`Invoke-RestMethod`) para criar participant, treino, atividade e validar com token de professor estão em `backend/readme.md`.
+1. **Validar a 4.1 no celular:** abrir a URL web pela rede local (IP da máquina) no navegador do celular.
+2. **Backend:** adicionar CORS e a rota `identify` (§4).
+3. **Bloco 2 — 4.3 Splash + Identificação + seções 5 e 12 "Participante":**
+   - Splash substitui o `index.tsx` provisório. Se o catálogo ainda for útil, mover para `/design-system`.
+   - API client (`src/services/api.ts`: fetch + timeout + erros + offline) e participant service.
+   - SessionContext: participante salvo no AsyncStorage (`StorageKeys.participant`), recuperado no startup, com redirect para `/identify` ou `/home`.
+   - Tela de identificação (data de nascimento → nome se não houver cadastro) + botão de professor.
+4. **Bloco 3 — Home:** saudação, pontos, distância semanal/mensal, conquistas recentes, treino principal da semana, CTA "Registrar treino".
+5. **Bloco 4 — Registro de atividade + Histórico:**
+   - Só natação.
+   - Campos: data, tipo (pré-selecionar o treino principal), distância, tempo.
+   - Histórico com StatusBadge.
+6. **Bloco 5 — Ranking:** abas Semanal/Mensal/Geral + distância e presença; destaque "Minha posição".
+7. **Bloco 6 — Conquistas:** desbloqueadas × bloqueadas.
+8. **Bloco 7 — Professor:** login JWT (salvo em `StorageKeys.teacherSession`), lista de pendentes, aprovar/rejeitar.
+9. Seção 13 (estados vazios, loading e erro já têm componentes prontos), testes (14) e deploy web (17/18).

@@ -1,98 +1,230 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { router, type Href } from 'expo-router';
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import {
+  AppText,
+  Avatar,
+  Button,
+  Card,
+  EmptyState,
+  Icon,
+  IconBadge,
+  InlineMessage,
+  ListRow,
+  Logo,
+  Screen,
+  SegmentedControl,
+  StatusBadge,
+  TextField,
+} from '@/components/ui';
+import { env } from '@/config/env';
+import { useAppTheme } from '@/contexts/theme-context';
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+/**
+ * PROVISÓRIO (Bloco 1): hub de navegação + catálogo do design system
+ * para validação. Será substituído pela Splash no Bloco 2.
+ */
+const routes: { label: string; href: Href }[] = [
+  { label: 'Identificação', href: '/identify' },
+  { label: 'Login professor', href: '/teacher-login' },
+  { label: 'Início (tabs)', href: '/home' },
+  { label: 'Registrar', href: '/register' },
+  { label: 'Ranking', href: '/ranking' },
+  { label: 'Perfil', href: '/profile' },
+  { label: 'Histórico', href: '/history' },
+  { label: 'Conquistas', href: '/achievements' },
+  { label: 'Professor', href: '/teacher' },
+];
+
+export default function DevHub() {
+  const { theme, preference, setPreference } = useAppTheme();
+  const [period, setPeriod] = useState<'weekly' | 'monthly'>('weekly');
+  const [name, setName] = useState('');
+
   return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
+    <Screen>
+      <Logo size="md" />
+
+      <Section title="Tema">
+        <SegmentedControl
+          value={preference}
+          onChange={setPreference}
+          options={[
+            { value: 'system', label: 'Sistema' },
+            { value: 'light', label: 'Claro' },
+            { value: 'dark', label: 'Escuro' },
+          ]}
+        />
+        <AppText variant="caption" color="tertiary">
+          API: {env.apiUrl}
+        </AppText>
+      </Section>
+
+      <Section title="Navegação">
+        <View style={styles.wrap}>
+          {routes.map((route) => (
+            <Button
+              key={route.label}
+              title={route.label}
+              size="sm"
+              variant="secondary"
+              fullWidth={false}
+              onPress={() => router.push(route.href)}
+            />
+          ))}
+        </View>
+      </Section>
+
+      <Section title="Tipografia">
+        <AppText variant="display">Display 30</AppText>
+        <AppText variant="title">Title 24</AppText>
+        <AppText variant="subtitle">Subtitle 20</AppText>
+        <AppText variant="heading">Heading 18</AppText>
+        <AppText variant="body">Body 16 — texto padrão do app.</AppText>
+        <AppText variant="label" color="secondary">
+          Label 14 secundário
+        </AppText>
+        <AppText variant="caption" color="tertiary">
+          Caption 12 terciário
+        </AppText>
+      </Section>
+
+      <Section title="Cores">
+        <View style={styles.wrap}>
+          {Object.entries({ ...theme.colors.brand, ...theme.colors.background }).map(([key, value]) => (
+            <View key={key} style={styles.swatch}>
+              <View style={[styles.swatchColor, { backgroundColor: value, borderColor: theme.colors.border.subtle }]} />
+              <AppText variant="caption" color="secondary">
+                {key}
+              </AppText>
+            </View>
+          ))}
+        </View>
+      </Section>
+
+      <Section title="Botões">
+        <Button title="Primário" icon="plus" />
+        <Button title="Outline" variant="outline" />
+        <Button title="Secundário" variant="secondary" />
+        <View style={styles.row}>
+          <Button title="Pequeno" size="sm" fullWidth={false} />
+          <Button title="Carregando" size="sm" fullWidth={false} loading />
+          <Button title="Desabilitado" size="sm" fullWidth={false} disabled />
+        </View>
+      </Section>
+
+      <Section title="Inputs">
+        <TextField label="Nome" icon="user" placeholder="Seu nome completo" value={name} onChangeText={setName} />
+        <TextField icon="lock" placeholder="Senha" secureToggle />
+        <TextField icon="calendar" placeholder="dd/mm/aaaa" error="Data de nascimento inválida" />
+      </Section>
+
+      <Section title="Cards e listas">
+        <Card variant="hero" onPress={() => {}} style={styles.row}>
+          <Icon name="waves" size="lg" color={theme.colors.hero.text} />
+          <View style={styles.flex}>
+            <AppText variant="label" color={theme.colors.hero.textMuted}>
+              Sequência atual
+            </AppText>
+            <AppText variant="title" color={theme.colors.hero.text}>
+              5 dias
+            </AppText>
+          </View>
+          <Icon name="flame" color={theme.colors.hero.text} />
+        </Card>
+
+        <Card variant="highlight">
+          <AppText variant="label" color="secondary">
+            Seus pontos
+          </AppText>
+          <AppText variant="display">980</AppText>
+        </Card>
+
+        <ListRow
+          title="Primeiro Mergulho"
+          subtitle="Registrou seu primeiro treino"
+          left={<IconBadge name="medal" />}
+          onPress={() => {}}
+        />
+        <ListRow
+          title="Focado"
+          subtitle="5 dias sem faltar"
+          left={<IconBadge name="zap" color={theme.colors.semantic.warning} background={theme.colors.semantic.warningBackground} />}
+          onPress={() => {}}
+        />
+      </Section>
+
+      <Section title="Badges, avatar e segmentado">
+        <View style={styles.row}>
+          <StatusBadge status="PENDING" />
+          <StatusBadge status="APPROVED" />
+          <StatusBadge status="REJECTED" />
+        </View>
+        <View style={styles.row}>
+          <Avatar />
+          <Avatar highlighted />
+        </View>
+        <SegmentedControl
+          value={period}
+          onChange={setPeriod}
+          options={[
+            { value: 'weekly', label: 'Semanal' },
+            { value: 'monthly', label: 'Mensal' },
+          ]}
+        />
+      </Section>
+
+      <Section title="Estados">
+        <InlineMessage message="Sua atividade será enviada para validação do professor." />
+        <InlineMessage tone="error" message="Não foi possível conectar ao servidor." />
+        <Card>
+          <EmptyState title="Nenhuma atividade ainda" description="Registre seu primeiro treino!" />
+        </Card>
+      </Section>
+    </Screen>
   );
 }
 
-export default function HomeScreen() {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;SwimRank!
-          </ThemedText>
-        </ThemedView>
-
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
-
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="small">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+    <View style={styles.section}>
+      <AppText variant="overline" color="tertiary">
+        {title}
+      </AppText>
+      {children}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+  section: {
+    gap: 12,
+    marginTop: 8,
+  },
+  wrap: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
+  row: {
+    flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    gap: 8,
+    flexWrap: 'wrap',
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  flex: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
-  title: {
-    textAlign: 'center',
+  swatch: {
+    alignItems: 'center',
+    gap: 4,
+    width: 72,
   },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  swatchColor: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    borderWidth: 1,
   },
 });

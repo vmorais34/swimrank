@@ -72,24 +72,24 @@
 * [x] Configurar Expo
 * [x] Configurar TypeScript
 * [x] Verificar ambiente local
-* [ ] Executar primeiro build
-* [ ] Gerar primeira URL web
+* [x] Executar primeiro build
+* [x] Gerar primeira URL web
 * [ ] Validar aplicação no navegador mobile
 
 ## 4.2 Estrutura
 
-* [ ] Definir estrutura de pastas
-* [ ] Configurar navegação
-* [ ] Configurar variáveis de ambiente
-* [ ] Criar componentes reutilizáveis
-* [ ] Criar design system
-* [ ] Definir design tokens
-* [ ] Definir tipografia
-* [ ] Definir espaçamentos
-* [ ] Definir botões
-* [ ] Definir inputs
-* [ ] Definir cards
-* [ ] Definir ícones/SVG
+* [x] Definir estrutura de pastas
+* [x] Configurar navegação
+* [x] Configurar variáveis de ambiente
+* [x] Criar componentes reutilizáveis
+* [x] Criar design system
+* [x] Definir design tokens
+* [x] Definir tipografia
+* [x] Definir espaçamentos
+* [x] Definir botões
+* [x] Definir inputs
+* [x] Definir cards
+* [x] Definir ícones/SVG
 
 ## 4.3 Telas V1
 
