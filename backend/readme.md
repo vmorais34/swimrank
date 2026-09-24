@@ -83,6 +83,7 @@ Invoke-RestMethod `
     }'
 
   $login
+  $token = $login.token
 
   3. save token
   $token = $login.token

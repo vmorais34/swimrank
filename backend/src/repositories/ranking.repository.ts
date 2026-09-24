@@ -154,3 +154,105 @@ export async function findGeneralRanking() {
     },
   ]);
 }
+
+// Distance
+export async function findWeeklyDistanceRanking(
+  startDate: Date,
+  endDate: Date
+) {
+  return Activity.aggregate([
+    {
+      $match: {
+        date: {
+          $gte: startDate,
+          $lt: endDate,
+        },
+        status: 'APPROVED',
+      },
+    },
+    {
+      $group: {
+        _id: '$participantId',
+        distance: {
+          $sum: '$distance',
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'participants',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'participant',
+      },
+    },
+    {
+      $unwind: '$participant',
+    },
+    {
+      $project: {
+        _id: 0,
+        participantId: '$_id',
+        name: '$participant.name',
+        distance: 1,
+      },
+    },
+    {
+      $sort: {
+        distance: -1,
+        name: 1,
+      },
+    },
+  ]);
+}
+
+// Presence
+export async function findWeeklyAttendanceRanking(
+  startDate: Date,
+  endDate: Date
+) {
+  return Activity.aggregate([
+    {
+      $match: {
+        date: {
+          $gte: startDate,
+          $lt: endDate,
+        },
+        status: 'APPROVED',
+      },
+    },
+    {
+      $group: {
+        _id: '$participantId',
+        attendance: {
+          $sum: 1,
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'participants',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'participant',
+      },
+    },
+    {
+      $unwind: '$participant',
+    },
+    {
+      $project: {
+        _id: 0,
+        participantId: '$_id',
+        name: '$participant.name',
+        attendance: 1,
+      },
+    },
+    {
+      $sort: {
+        attendance: -1,
+        name: 1,
+      },
+    },
+  ]);
+}

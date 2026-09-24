@@ -20,21 +20,26 @@ function getWeekStart(date: Date) {
   return weekStart;
 }
 
-function applyRankingPositions(ranking: any[]) {
-  let previousPoints: number | null = null;
+function applyRankingPositions(
+  ranking: any[],
+  valueKey: 'points' | 'distance' | 'attendance'
+) {
+  let previousValue: number | null = null;
   let currentPosition = 0;
 
   return ranking.map((participant, index) => {
-    if (participant.points !== previousPoints) {
+    const currentValue = participant[valueKey];
+
+    if (currentValue !== previousValue) {
       currentPosition = index + 1;
-      previousPoints = participant.points;
+      previousValue = currentValue;
     }
 
     return {
       position: currentPosition,
       participantId: participant.participantId,
       name: participant.name,
-      points: participant.points,
+      [valueKey]: currentValue,
     };
   });
 }
@@ -54,7 +59,7 @@ export async function getWeeklyRanking(date: Date) {
       endDate
     );
 
-  return applyRankingPositions(ranking);
+  return applyRankingPositions(ranking, 'points');
 }
 
 export async function getMonthlyRanking(date: Date) {
@@ -80,12 +85,42 @@ export async function getMonthlyRanking(date: Date) {
       endDate
     );
 
-  return applyRankingPositions(ranking);
+  return applyRankingPositions(ranking, 'points');
 }
 
 export async function getGeneralRanking() {
   const ranking =
     await rankingRepository.findGeneralRanking();
 
-  return applyRankingPositions(ranking);
+  return applyRankingPositions(ranking, 'points');
+}
+
+export async function getWeeklyDistanceRanking(date: Date) {
+  const startDate = getWeekStart(date);
+
+  const endDate = new Date(startDate);
+  endDate.setUTCDate(endDate.getUTCDate() + 7);
+
+  const ranking =
+    await rankingRepository.findWeeklyDistanceRanking(
+      startDate,
+      endDate
+    );
+
+  return applyRankingPositions(ranking, 'distance');
+}
+
+export async function getWeeklyAttendanceRanking(date: Date) {
+  const startDate = getWeekStart(date);
+
+  const endDate = new Date(startDate);
+  endDate.setUTCDate(endDate.getUTCDate() + 7);
+
+  const ranking =
+    await rankingRepository.findWeeklyAttendanceRanking(
+      startDate,
+      endDate
+    );
+
+  return applyRankingPositions(ranking, 'attendance');
 }

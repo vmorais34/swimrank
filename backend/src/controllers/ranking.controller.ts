@@ -60,3 +60,47 @@ export async function getGeneralRanking(
 
   return res.status(200).json(ranking);
 }
+
+export async function getWeeklyDistanceRanking(
+  req: Request,
+  res: Response
+) {
+  const result = rankingQuerySchema.safeParse(req.query);
+
+  if (!result.success) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'Dados inválidos',
+      details: result.error.issues,
+    });
+  }
+
+  const ranking =
+    await rankingService.getWeeklyDistanceRanking(
+      new Date(`${result.data.date}T00:00:00.000Z`)
+    );
+
+  return res.status(200).json(ranking);
+}
+
+export async function getWeeklyAttendanceRanking(
+  req: Request,
+  res: Response
+) {
+  const result = rankingQuerySchema.safeParse(req.query);
+
+  if (!result.success) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'Dados inválidos',
+      details: result.error.issues,
+    });
+  }
+
+  const ranking =
+    await rankingService.getWeeklyAttendanceRanking(
+      new Date(`${result.data.date}T00:00:00.000Z`)
+    );
+
+  return res.status(200).json(ranking);
+}
