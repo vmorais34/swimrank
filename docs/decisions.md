@@ -223,3 +223,165 @@ falta → 0
 atividade precisa estar APPROVED
 ranking considera o Training principal da semana
 atividade precisa ter o mesmo type do treinamento principal
+
+
+# ADR — Estratégia de domínio e infraestrutura para produção
+
+**Status:** Planejado
+**Data:** 25/09/2026
+
+## Contexto
+
+O SwimRank está sendo desenvolvido inicialmente com backend em Node.js/Express, MongoDB e aplicativo mobile utilizando Expo/React Native.
+
+Como a aplicação terá como objetivo principal funcionar como um aplicativo mobile, não será necessário manter um frontend web para que o produto funcione.
+
+Entretanto, será utilizado um domínio próprio para separar a identidade pública do projeto da infraestrutura de backend.
+
+## Decisão
+
+A arquitetura futura do SwimRank utilizará:
+
+```text
+swimrank.com
+    ↓
+Site institucional / páginas públicas
+    ├── Apresentação do projeto
+    ├── Política de privacidade
+    ├── Termos de uso
+    └── Suporte / informações do aplicativo
+
+
+api.swimrank.com
+    ↓
+Backend Node.js + Express
+    ↓
+MongoDB Atlas
+
+
+Aplicativo Mobile
+    ↓ HTTPS
+https://api.swimrank.com
+    ↓
+Backend
+    ↓
+MongoDB Atlas
+```
+
+O aplicativo mobile não dependerá de um frontend web para sua execução.
+
+O domínio `api.swimrank.com` será utilizado como endereço público e estável da API, independentemente da plataforma de hospedagem utilizada pelo backend.
+
+## Motivações
+
+* Separar claramente frontend/site institucional e backend.
+* Evitar que o aplicativo dependa diretamente do domínio ou URL da plataforma de hospedagem.
+* Permitir migração futura de infraestrutura sem necessidade de alterar a arquitetura do aplicativo.
+* Disponibilizar uma identidade própria para a API.
+* Facilitar a publicação de políticas, termos e páginas de suporte.
+* Preparar o projeto para evolução futura sem introduzir uma dependência obrigatória de frontend web.
+
+## Infraestrutura planejada
+
+Inicialmente, o backend poderá ser hospedado em uma plataforma gerenciada, como Render ou Railway.
+
+O banco de dados de produção será hospedado no MongoDB Atlas.
+
+O domínio e DNS poderão ser gerenciados pelo Cloudflare.
+
+Exemplo:
+
+```text
+Cloudflare
+    │
+    ├── swimrank.com
+    │       ↓
+    │   Site institucional
+    │
+    └── api.swimrank.com
+            ↓
+        Backend hospedado
+            ↓
+        MongoDB Atlas
+```
+
+## Ambientes
+
+A arquitetura deverá considerar a separação entre desenvolvimento, staging e produção:
+
+```text
+Development
+localhost
+    ↓
+MongoDB local
+
+
+Staging
+api-staging.swimrank.com
+    ↓
+Backend de testes
+    ↓
+MongoDB Atlas — staging
+
+
+Production
+api.swimrank.com
+    ↓
+Backend de produção
+    ↓
+MongoDB Atlas — production
+```
+
+## Segurança
+
+As credenciais e informações sensíveis deverão permanecer em variáveis de ambiente.
+
+O arquivo `.env` não deverá ser versionado no Git.
+
+A comunicação entre aplicativo e API deverá utilizar HTTPS.
+
+O banco de produção deverá possuir credenciais e configuração independentes do ambiente de desenvolvimento.
+
+## Consequências
+
+### Positivas
+
+* Arquitetura preparada para produção.
+* Menor acoplamento entre aplicativo e infraestrutura.
+* Possibilidade de trocar o provedor de hospedagem.
+* Endereço estável para consumo da API.
+* Estrutura preparada para crescimento futuro.
+
+### Negativas
+
+* Necessidade de administrar domínio e DNS.
+* Custos futuros de domínio/hospedagem, dependendo dos provedores escolhidos.
+* Maior quantidade de componentes de infraestrutura.
+* Necessidade de configurar ambientes separados.
+
+## Próximas etapas
+
+1. Registrar o domínio `swimrank.com`.
+2. Configurar DNS através do Cloudflare.
+3. Criar banco de produção no MongoDB Atlas.
+4. Hospedar o backend em uma plataforma gerenciada.
+5. Configurar variáveis de ambiente de produção.
+6. Configurar `api.swimrank.com`.
+7. Configurar HTTPS.
+8. Validar o endpoint `/health` em produção.
+9. Configurar o aplicativo Expo para consumir a API de produção.
+10. Criar páginas públicas de política de privacidade, termos e suporte.
+11. Separar configurações de Development, Staging e Production.
+12. Documentar o processo de deploy e rollback.
+
+## Decisão futura
+
+A implementação de um frontend web completo permanece fora do escopo inicial do aplicativo mobile.
+
+Caso futuramente seja necessário disponibilizar uma versão web, ela poderá ser adicionada sem modificar a função do domínio da API:
+
+```text
+swimrank.com       → Web / institucional
+app.swimrank.com   → Frontend web, caso necessário
+api.swimrank.com   → Backend
+```
