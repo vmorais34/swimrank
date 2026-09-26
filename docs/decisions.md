@@ -224,7 +224,6 @@ atividade precisa estar APPROVED
 ranking considera o Training principal da semana
 atividade precisa ter o mesmo type do treinamento principal
 
-
 # ADR — Estratégia de domínio e infraestrutura para produção
 
 **Status:** Planejado
@@ -331,6 +330,29 @@ Backend de produção
     ↓
 MongoDB Atlas — production
 ```
+
+Hoje já deixei pronto
+                 ┌─────────────────┐
+                 │   Expo / Mobile │
+                 └────────┬────────┘
+                          │ HTTPS
+                          ▼
+                ┌───────────────────┐
+                │  Render           │
+                │  Express + TS     │
+                │                   │
+                │ Auth / JWT        │
+                │ RBAC              │
+                │ Controllers       │
+                │ Services          │
+                │ Repositories      │
+                │ Validation        │
+                └─────────┬─────────┘
+                          │
+                          ▼
+                ┌───────────────────┐
+                │   MongoDB Atlas   │
+                └───────────────────┘
 
 ## Segurança
 
