@@ -170,6 +170,7 @@ Foi decidido que, embora a V1 não utilize autenticação para participantes —
 
 identificação local do participante ≠ autenticação/autorização do professor.
 
+```text
 Fluxo:
                     ┌──────────────┐
                     │     User     │
@@ -192,6 +193,7 @@ Fluxo:
              │                           │
              ▼                           ▼
         Activities                 Validation
+```
 
 ## Ranking
 
@@ -332,6 +334,7 @@ MongoDB Atlas — production
 ```
 
 Hoje já deixei pronto
+```text
                  ┌─────────────────┐
                  │   Expo / Mobile │
                  └────────┬────────┘
@@ -353,7 +356,7 @@ Hoje já deixei pronto
                 ┌───────────────────┐
                 │   MongoDB Atlas   │
                 └───────────────────┘
-
+```
 ## Segurança
 
 As credenciais e informações sensíveis deverão permanecer em variáveis de ambiente.
@@ -385,9 +388,9 @@ O banco de produção deverá possuir credenciais e configuração independentes
 
 1. Registrar o domínio `swimrank.com`.
 2. Configurar DNS através do Cloudflare.
-3. Criar banco de produção no MongoDB Atlas.
-4. Hospedar o backend em uma plataforma gerenciada.
-5. Configurar variáveis de ambiente de produção.
+3. Criar banco de produção no MongoDB Atlas. -- ok
+4. Hospedar o backend em uma plataforma gerenciada. -- ok
+5. Configurar variáveis de ambiente de produção. -- ok
 6. Configurar `api.swimrank.com`.
 7. Configurar HTTPS.
 8. Validar o endpoint `/health` em produção.
