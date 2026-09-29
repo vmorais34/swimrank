@@ -1,6 +1,6 @@
 # SwimRank — Status do projeto
 
-> Atualizado em 2026-09-23 (fim do Bloco 1 do frontend: seções 4.1 e 4.2 do `todo.md`).
+> Atualizado em 2026-09-29 (CORS no backend; API publicada no Render).
 > Entrega: **27/10**. Node 24.11.1.
 
 ---
@@ -9,7 +9,7 @@
 
 | Área | Situação |
 |---|---|
-| Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Faltam 2 ajustes para o front (ver §4). |
+| Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Em produção: https://swimrank-api.onrender.com/health. CORS ✅; falta a rota `identify` (ver §4). |
 | Frontend 4.1 Inicialização | ✅ Feito (falta só validar em celular real). |
 | Frontend 4.2 Estrutura / design system | ✅ Feito e validado no navegador (tema claro e escuro). |
 | Frontend 4.3 Telas V1 | ⏳ **Próximo passo.** Por enquanto só existem placeholders "Em construção". |
@@ -72,13 +72,14 @@ npx expo start --web       # http://localhost:8081  → "/" mostra o catálogo d
 npx tsc --noEmit           # typecheck
 npx expo export -p web     # build web (pasta dist/)
 ```
-Env: copiar `app/.env.example` para `app/.env`. Em celular físico ou emulador Android, use o IP da máquina no lugar de `localhost`.
+Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swimrank-api.onrender.com` (plano free do Render hiberna; o primeiro request pode levar ~50s). Em celular físico ou emulador Android, use o IP da máquina no lugar de `localhost`.
 
 ---
 
 ## 4. Pendências no backend (necessárias antes/durante a 4.3)
 
-1. **CORS:** o `backend/src/app.ts` não tem CORS, e o app web (localhost:8081) não consegue chamar a API sem isso.
+1. ✅ **CORS:** feito em `backend/src/config/cors.ts`. Origens liberadas pela env `CORS_ORIGINS` (separadas por vírgula; padrão `http://localhost:8081`).
+   - **Ao publicar o front web, adicionar a URL dele em `CORS_ORIGINS` no painel do Render.**
 2. **Rota de identificação por data de nascimento:** hoje só existe `POST /participants`, que devolve 409 se o participante já existe.
    - Sugestão: `POST /participants/identify { birthdate, name? }`.
    - 0 encontrados → 404, e o front pede o nome e cadastra.
@@ -105,7 +106,7 @@ Env: copiar `app/.env.example` para `app/.env`. Em celular físico ou emulador A
 ## 5. Próximos passos (em ordem)
 
 1. **Validar a 4.1 no celular:** abrir a URL web pela rede local (IP da máquina) no navegador do celular.
-2. **Backend:** adicionar CORS e a rota `identify` (§4).
+2. **Backend:** ~~CORS~~ ✅ e a rota `identify` (§4).
 3. **Bloco 2 — 4.3 Splash + Identificação + seções 5 e 12 "Participante":**
    - Splash substitui o `index.tsx` provisório. Se o catálogo ainda for útil, mover para `/design-system`.
    - API client (`src/services/api.ts`: fetch + timeout + erros + offline) e participant service.
