@@ -29,7 +29,7 @@
 
 ## 4.3 Telas V1
 
-* [ ] Splash
+* [x] Splash
 * [ ] Identificação / cadastro
 * [ ] Home
 * [ ] Registro de atividade

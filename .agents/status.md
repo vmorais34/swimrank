@@ -1,6 +1,6 @@
 # SwimRank — Status do projeto
 
-> Atualizado em 2026-09-29 (CORS no backend; API publicada no Render).
+> Atualizado em 2026-09-29 (Splash pronta; CORS e filtro de login no backend; API no Render).
 > Entrega: **27/10**. Node 24.11.1.
 
 ---
@@ -47,7 +47,8 @@ Libs adicionadas: `react-native-svg`, `@react-native-async-storage/async-storage
 app/src/
 ├── app/                      # rotas (Expo Router)
 │   ├── _layout.tsx           # fontes, SafeArea, ThemeProvider, Stack
-│   ├── index.tsx             # PROVISÓRIO: hub + catálogo do design system (vira Splash na 4.3)
+│   ├── index.tsx             # Splash: logo SwimRank + "Propriedade" Patrick Esportes → /home ou /identify
+│   ├── design-system.tsx     # catálogo do design system + atalhos (ferramenta de dev)
 │   ├── (auth)/identify.tsx, teacher-login.tsx
 │   ├── (app)/_layout.tsx     # tab bar: Início / Registrar / Ranking / Perfil
 │   ├── (app)/home, register, ranking, profile, history*, achievements*   (*fora da tab bar)
@@ -68,7 +69,7 @@ app/src/
 **Rodar:**
 ```bash
 cd app
-npx expo start --web       # http://localhost:8081  → "/" mostra o catálogo do design system
+npx expo start --web       # http://localhost:8081  → "/" Splash; "/design-system" catálogo
 npx tsc --noEmit           # typecheck
 npx expo export -p web     # build web (pasta dist/)
 ```
@@ -107,7 +108,8 @@ Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swim
 1. **Validar a 4.1 no celular:** abrir a URL web pela rede local (IP da máquina) no navegador do celular.
 2. ✅ **Backend:** CORS e filtro `GET /participants?birthdate=` (§4).
 3. **Bloco 2 — 4.3 Splash + Identificação + seções 5 e 12 "Participante":**
-   - Splash substitui o `index.tsx` provisório. Se o catálogo ainda for útil, mover para `/design-system`.
+   - ✅ Splash (`index.tsx`): logo SwimRank + "Propriedade" com o logo Patrick Esportes (`assets/images/patrick-esportes.png`, PNG branco transparente gerado do `logo-patrick.jpg` e pintado com `tintColor` do tema). Mínimo de 1,2s; hoje lê o participante direto do storage (trocar pelo SessionContext). Catálogo movido para `/design-system`.
+   - Obs.: `.agents/references/logo-patrick-black.jpg` está corrompido (imagem toda preta).
    - API client (`src/services/api.ts`: fetch + timeout + erros + offline) e participant service.
    - SessionContext: participante salvo no AsyncStorage (`StorageKeys.participant`), recuperado no startup, com redirect para `/identify` ou `/home`.
    - Tela de identificação (data de nascimento → nome se não houver cadastro) + botão de professor.
