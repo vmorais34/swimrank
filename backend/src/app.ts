@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 
 import { connectDatabase } from './config/database';
+import { corsOptions } from './config/cors';
 
 import authRouter from './routes/auth.routes';
 import userRouter from './routes/user.routes';
@@ -17,6 +19,7 @@ import { errorHandler } from './middlewares/error-handler';
 
 const app = express();
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/users', userRouter);
 app.use('/participants', participantRouter);
