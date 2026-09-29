@@ -9,7 +9,7 @@
 
 | Área | Situação |
 |---|---|
-| Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Em produção: https://swimrank-api.onrender.com/health. CORS ✅; falta a rota `identify` (ver §4). |
+| Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Em produção: https://swimrank-api.onrender.com/health. CORS ✅; filtro `?birthdate=` ✅ (ver §4). |
 | Frontend 4.1 Inicialização | ✅ Feito (falta só validar em celular real). |
 | Frontend 4.2 Estrutura / design system | ✅ Feito e validado no navegador (tema claro e escuro). |
 | Frontend 4.3 Telas V1 | ⏳ **Próximo passo.** Por enquanto só existem placeholders "Em construção". |
@@ -80,16 +80,15 @@ Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swim
 
 1. ✅ **CORS:** feito em `backend/src/config/cors.ts`. Origens liberadas pela env `CORS_ORIGINS` (separadas por vírgula; padrão `http://localhost:8081`).
    - **Ao publicar o front web, adicionar a URL dele em `CORS_ORIGINS` no painel do Render.**
-2. **Rota de identificação por data de nascimento:** hoje só existe `POST /participants`, que devolve 409 se o participante já existe.
-   - Sugestão: `POST /participants/identify { birthdate, name? }`.
-   - 0 encontrados → 404, e o front pede o nome e cadastra.
-   - 1 encontrado → devolve o participante.
-   - Mais de 1 com a mesma data → exige `name`, porque o índice único do model é `name + birthdate`.
+2. ✅ **Identificação por data de nascimento (decidido em 2026-09-29):** sem rota nova, só um filtro opcional em `GET /participants?birthdate=YYYY-MM-DD`.
+   - Lista vazia → primeiro acesso: pede o nome e chama `POST /participants { name, birthdate }`.
+   - 1 resultado → entra direto com esse participante.
+   - Mais de 1 → pede o nome para desempatar (comparar entre os resultados retornados).
 
 > Confirmar com o usuário antes de mexer no backend.
 
 ### Endpoints que o front vai usar
-- `POST /participants`, `GET /participants/:id`
+- `GET /participants?birthdate=YYYY-MM-DD` (login), `POST /participants` (primeiro acesso), `GET /participants/:id`
 - `POST /activities` com `{ participantId, date: 'YYYY-MM-DD', type, distance (m), time (s) }`, criada como `PENDING`
 - `GET /activities/participant/:participantId`
 - `GET /activities`; `PATCH /activities/:id/validation { status: APPROVED|REJECTED }` (Bearer TEACHER/ADMIN)
@@ -106,7 +105,7 @@ Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swim
 ## 5. Próximos passos (em ordem)
 
 1. **Validar a 4.1 no celular:** abrir a URL web pela rede local (IP da máquina) no navegador do celular.
-2. **Backend:** ~~CORS~~ ✅ e a rota `identify` (§4).
+2. ✅ **Backend:** CORS e filtro `GET /participants?birthdate=` (§4).
 3. **Bloco 2 — 4.3 Splash + Identificação + seções 5 e 12 "Participante":**
    - Splash substitui o `index.tsx` provisório. Se o catálogo ainda for útil, mover para `/design-system`.
    - API client (`src/services/api.ts`: fetch + timeout + erros + offline) e participant service.

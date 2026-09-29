@@ -1,15 +1,7 @@
 import { CorsOptions } from 'cors';
 
-/**
- * Origens liberadas por padrão quando CORS_ORIGINS não está definido
- * (Expo web em desenvolvimento).
- */
 const DEFAULT_ORIGINS = ['http://localhost:8081', 'http://127.0.0.1:8081'];
 
-/**
- * CORS_ORIGINS: lista separada por vírgula.
- * Ex.: CORS_ORIGINS=http://localhost:8081,https://swimrank.vercel.app
- */
 function getAllowedOrigins(): string[] {
   const raw = process.env.CORS_ORIGINS;
 

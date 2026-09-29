@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import * as participantService from '../services/participant.service';
-import { createParticipantSchema, participantIdSchema, updateParticipantSchema } from '../validations/participant.validation';
+import { createParticipantSchema, listParticipantsQuerySchema, participantIdSchema, updateParticipantSchema } from '../validations/participant.validation';
 
 export async function getParticipantById(
   req: Request,
@@ -26,11 +26,25 @@ export async function getParticipantById(
 }
 
 export async function getAllParticipants(
-  _req: Request,
+  req: Request,
   res: Response
 ) {
+  const result = listParticipantsQuerySchema.safeParse(req.query);
+
+  if (!result.success) {
+    return res.status(400).json({
+      error: 'VALIDATION_ERROR',
+      message: 'Filtro inválido',
+      details: result.error.issues,
+    });
+  }
+
   const participants =
-    await participantService.getAllParticipants();
+    await participantService.getAllParticipants({
+      ...(result.data.birthdate !== undefined && {
+        birthdate: new Date(result.data.birthdate),
+      }),
+    });
 
   return res.status(200).json(participants);
 }

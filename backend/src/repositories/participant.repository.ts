@@ -5,6 +5,10 @@ interface CreateParticipantData {
   birthdate: Date;
 }
 
+interface ListParticipantsFilter {
+  birthdate?: Date;
+}
+
 interface UpdateParticipantData {
   name?: string;
   birthdate?: Date;
@@ -38,8 +42,20 @@ export async function findParticipantById(id: string) {
   return Participant.findById(id);
 }
 
-export async function findAllParticipants() {
-  return Participant.find().sort({
+export async function findAllParticipants(
+  filter: ListParticipantsFilter = {}
+) {
+  const query: Record<string, unknown> = {};
+
+  // Compara o dia inteiro (UTC) para não depender do horário salvo na data
+  if (filter.birthdate) {
+    const start = filter.birthdate;
+    const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+
+    query.birthdate = { $gte: start, $lt: end };
+  }
+
+  return Participant.find(query).sort({
     createdAt: -1,
   });
 }

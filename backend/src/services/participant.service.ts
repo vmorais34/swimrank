@@ -6,6 +6,10 @@ interface CreateParticipantData {
   birthdate: Date;
 }
 
+interface ListParticipantsFilter {
+  birthdate?: Date;
+}
+
 interface UpdateParticipantData {
   name?: string;
   birthdate?: Date;
@@ -27,8 +31,10 @@ export async function getParticipantById(id: string) {
   return participant;
 }
 
-export async function getAllParticipants() {
-  return participantRepository.findAllParticipants();
+export async function getAllParticipants(
+  filter: ListParticipantsFilter = {}
+) {
+  return participantRepository.findAllParticipants(filter);
 }
 
 export async function updateParticipant(

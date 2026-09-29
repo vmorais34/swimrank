@@ -7,6 +7,12 @@ export const participantIdSchema = z.object({
   ),
 });
 
+export const listParticipantsQuerySchema = z.object({
+  birthdate: z
+    .iso.date('Data de nascimento inválida')
+    .optional(),
+});
+
 export const createParticipantSchema = z.object({
   name: z
     .string()
