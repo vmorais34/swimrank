@@ -3,39 +3,12 @@ import { useState } from 'react';
 
 import { AppText, Avatar, Button, Header, InlineMessage, ListRow, Screen, TextField } from '@/components/ui';
 import { useSession } from '@/contexts/session-context';
+import { digitsToIsoDate, formatDateDigits } from '@/lib/date';
 import { ApiError, NetworkError } from '@/services/api';
 import { participantService } from '@/services/participant.service';
 import type { Participant } from '@/types/api';
 
 type Step = 'birthdate' | 'select' | 'register';
-
-function formatBirthdateDisplay(digits: string): string {
-  const day = digits.slice(0, 2);
-  const month = digits.slice(2, 4);
-  const year = digits.slice(4, 8);
-  return [day, month, year].filter(Boolean).join('/');
-}
-
-/** Converte "DDMMAAAA" em "AAAA-MM-DD", validando dia/mês/ano e recusando datas futuras */
-function birthdateDigitsToIso(digits: string): string | null {
-  if (digits.length !== 8) return null;
-
-  const day = Number(digits.slice(0, 2));
-  const month = Number(digits.slice(2, 4));
-  const year = Number(digits.slice(4, 8));
-
-  if (year < 1900 || month < 1 || month > 12) return null;
-
-  const daysInMonth = new Date(year, month, 0).getDate();
-  if (day < 1 || day > daysInMonth) return null;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  if (new Date(year, month - 1, day) > today) return null;
-
-  const pad = (value: number) => String(value).padStart(2, '0');
-  return `${year}-${pad(month)}-${pad(day)}`;
-}
 
 function requestErrorMessage(error: unknown): string {
   if (error instanceof NetworkError || error instanceof ApiError) return error.message;
@@ -79,7 +52,7 @@ export default function IdentifyScreen() {
   }
 
   async function handleSubmitBirthdate() {
-    const iso = birthdateDigitsToIso(digits);
+    const iso = digitsToIsoDate(digits, { minYear: 1900, maxDate: new Date() });
 
     if (!iso) {
       setBirthdateError('Informe uma data de nascimento válida.');
@@ -195,7 +168,7 @@ export default function IdentifyScreen() {
         placeholder="DD/MM/AAAA"
         keyboardType="numeric"
         maxLength={10}
-        value={formatBirthdateDisplay(digits)}
+        value={formatDateDigits(digits)}
         onChangeText={handleChangeBirthdate}
         error={birthdateError}
       />

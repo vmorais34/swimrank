@@ -82,8 +82,9 @@ export type PointsRankingEntry = RankingEntryBase & { points: number };
 export type DistanceRankingEntry = RankingEntryBase & { distance: number };
 export type AttendanceRankingEntry = RankingEntryBase & { attendance: number };
 
+/** Corpo de `POST /auth/login` — note que o backend retorna `id`, não `_id` (ver auth.service.ts) */
 export interface User {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   role: UserRole;

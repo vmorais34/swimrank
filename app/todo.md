@@ -32,11 +32,11 @@
 * [x] Splash
 * [x] Identificação / cadastro
 * [x] Home
-* [ ] Registro de atividade
-* [ ] Histórico de atividades
-* [ ] Ranking
-* [ ] Conquistas
-* [ ] Fluxo básico professor/admin
+* [x] Registro de atividade
+* [x] Histórico de atividades
+* [x] Ranking
+* [x] Conquistas
+* [x] Fluxo básico professor/admin
 
 ---
 
@@ -62,14 +62,14 @@
 * [x] Configurar API Base URL
 * [x] Criar API client
 * [x] Criar participant service
-* [ ] Criar activity service
-* [ ] Criar ranking service
-* [ ] Criar achievement service
+* [x] Criar activity service
+* [x] Criar ranking service
+* [x] Criar achievement service
 * [x] Implementar loading states
 * [x] Implementar tratamento de erros
 * [x] Implementar tratamento offline/network
 * [x] Validar respostas da API (fluxo de participantes)
-* [ ] Testar fluxo completo Frontend → API → MongoDB (falta 4.3 completa)
+* [ ] Testar fluxo completo Frontend → API → MongoDB (falta validar o Bloco 7)
 
 ---
 
@@ -84,34 +84,34 @@
 
 ## Atividades
 
-* [ ] Criar tela de registro
-* [ ] Permitir somente atividades de natação
-* [ ] Conectar registro à API
-* [ ] Exibir histórico
-* [ ] Exibir status da atividade
+* [x] Criar tela de registro
+* [x] Permitir somente atividades de natação
+* [x] Conectar registro à API
+* [x] Exibir histórico
+* [x] Exibir status da atividade
 
 ## Ranking
 
-* [ ] Criar ranking principal
-* [ ] Criar ranking de pontos
-* [ ] Criar ranking de distância
-* [ ] Criar ranking de presença
-* [ ] Exibir posição do participante
+* [x] Criar ranking principal
+* [x] Criar ranking de pontos
+* [x] Criar ranking de distância
+* [x] Criar ranking de presença
+* [x] Exibir posição do participante
 
 ## Achievements
 
-* [ ] Criar tela de conquistas
-* [ ] Exibir conquistas desbloqueadas
-* [ ] Exibir conquistas bloqueadas
+* [x] Criar tela de conquistas
+* [x] Exibir conquistas desbloqueadas
+* [x] Exibir conquistas bloqueadas
 
 > A criação de conquistas será somente via API! Não terá tela
 
 ## Professor/Admin
 
-* [ ] Criar fluxo básico
-* [ ] Visualizar atividades pendentes
-* [ ] Aprovar atividade
-* [ ] Rejeitar atividade
+* [x] Criar fluxo básico
+* [x] Visualizar atividades pendentes
+* [x] Aprovar atividade
+* [x] Rejeitar atividade
 
 ---
 
@@ -120,13 +120,13 @@
 * [ ] Criar wireframes finais
 * [ ] Validar fluxo de navegação
 * [ ] Implementar layout mobile-first
-* [ ] Implementar dashboard
-* [ ] Implementar ranking
-* [ ] Implementar histórico
-* [ ] Implementar conquistas
-* [ ] Implementar fluxo professor
-* [ ] Criar estados vazios
-* [ ] Criar estados de carregamento
-* [ ] Criar estados de erro
+* [x] Implementar dashboard
+* [x] Implementar ranking
+* [x] Implementar histórico
+* [x] Implementar conquistas
+* [x] Implementar fluxo professor
+* [x] Criar estados vazios
+* [x] Criar estados de carregamento
+* [x] Criar estados de erro
 * [ ] Testar usabilidade
 * [ ] Testar diferentes tamanhos de tela

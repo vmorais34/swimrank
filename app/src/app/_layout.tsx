@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SessionProvider } from '@/contexts/session-context';
+import { TeacherSessionProvider } from '@/contexts/teacher-session-context';
 import { AppThemeProvider, useTheme } from '@/contexts/theme-context';
 
 SplashScreen.preventAutoHideAsync();
@@ -62,9 +63,11 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SessionProvider>
-        <AppThemeProvider>
-          <RootNavigator />
-        </AppThemeProvider>
+        <TeacherSessionProvider>
+          <AppThemeProvider>
+            <RootNavigator />
+          </AppThemeProvider>
+        </TeacherSessionProvider>
       </SessionProvider>
     </SafeAreaProvider>
   );

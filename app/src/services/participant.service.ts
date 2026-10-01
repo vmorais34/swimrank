@@ -9,4 +9,7 @@ export const participantService = {
   create: (data: { name: string; birthdate: string }) => api.post<Participant>('/participants', data),
 
   getById: (id: string) => api.get<Participant>(`/participants/${id}`),
+
+  /** Lista todos os participantes — usado para resolver nomes na área do professor */
+  list: () => api.get<Participant[]>('/participants'),
 };

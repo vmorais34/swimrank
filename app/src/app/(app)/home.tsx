@@ -7,6 +7,7 @@ import { useSession } from '@/contexts/session-context';
 import { useTheme } from '@/contexts/theme-context';
 import { isoDateUTC, todayIso, weekStartIso } from '@/lib/date';
 import { formatDistance } from '@/lib/format';
+import { findMainTraining } from '@/lib/training';
 import { activityService } from '@/services/activity.service';
 import { ApiError, NetworkError } from '@/services/api';
 import { participantAchievementService } from '@/services/participant-achievement.service';
@@ -59,8 +60,7 @@ export default function HomeScreen() {
         .filter((activity) => isoDateUTC(activity.date).slice(0, 7) === monthKey)
         .reduce((total, activity) => total + activity.distance, 0);
 
-      const mainTraining =
-        trainings.find((training) => training.isMain && isoDateUTC(training.date) === weekStart) ?? null;
+      const mainTraining = findMainTraining(trainings, weekStart);
 
       setData({
         participant,
