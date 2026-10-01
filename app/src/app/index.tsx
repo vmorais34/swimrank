@@ -1,13 +1,12 @@
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, Logo } from '@/components/ui';
+import { useSession } from '@/contexts/session-context';
 import { useTheme } from '@/contexts/theme-context';
-import { storage, StorageKeys } from '@/lib/storage';
-import type { Participant } from '@/types/api';
 
 /** Tempo mínimo da splash, para a marca não "piscar" na tela */
 const MIN_SPLASH_MS = 1200;
@@ -20,25 +19,19 @@ const patrickLogo = require('@/assets/images/patrick-esportes.png');
  */
 export default function SplashScreen() {
   const theme = useTheme();
+  const { participant, status } = useSession();
+  const [minSplashDone, setMinSplashDone] = useState(false);
 
   useEffect(() => {
-    let active = true;
-
-    async function bootstrap() {
-      const [participant] = await Promise.all([
-        storage.get<Participant>(StorageKeys.participant),
-        new Promise((resolve) => setTimeout(resolve, MIN_SPLASH_MS)),
-      ]);
-
-      if (active) router.replace(participant ? '/home' : '/identify');
-    }
-
-    bootstrap();
-
-    return () => {
-      active = false;
-    };
+    const timer = setTimeout(() => setMinSplashDone(true), MIN_SPLASH_MS);
+    return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (minSplashDone && status === 'ready') {
+      router.replace(participant ? '/home' : '/identify');
+    }
+  }, [minSplashDone, status, participant]);
 
   return (
     <SafeAreaView

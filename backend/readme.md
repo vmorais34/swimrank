@@ -369,7 +369,7 @@ Campos: `participantId`, `date` (`YYYY-MM-DD`), `type` (até 50), `distance` (> 
 Toda atividade nasce com `status: PENDING` e `points: 0`. Os pontos só entram quando um professor/admin aprova.
 
 **Criar** (sem auth)
-
+6ab7194e67ff4b0ff834581e
 ```powershell
 $body = @{
   participantId = $participantId

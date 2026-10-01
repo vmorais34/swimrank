@@ -30,8 +30,8 @@
 ## 4.3 Telas V1
 
 * [x] Splash
-* [ ] Identificação / cadastro
-* [ ] Home
+* [x] Identificação / cadastro
+* [x] Home
 * [ ] Registro de atividade
 * [ ] Histórico de atividades
 * [ ] Ranking
@@ -45,31 +45,31 @@
 > A V1 não terá autenticação tradicional.
 > A identificação inicial será simplificada para o MVP.
 
-* [ ] Criar tela de identificação
-* [ ] Criar input de nome
-* [ ] Validar nome
-* [ ] Definir identificador local
-* [ ] Salvar identificador localmente
-* [ ] Salvar nome localmente
-* [ ] Recuperar participante ao iniciar aplicação
-* [ ] Definir comportamento quando os dados locais não existirem
-* [ ] Definir comportamento quando participante trocar de dispositivo
+* [x] Criar tela de identificação
+* [x] Criar input de nome
+* [x] Validar nome
+* [x] Definir identificador local
+* [x] Salvar identificador localmente
+* [x] Salvar nome localmente
+* [x] Recuperar participante ao iniciar aplicação
+* [x] Definir comportamento quando os dados locais não existirem
+* [x] Definir comportamento quando participante trocar de dispositivo
 
 ---
 
 # 11. Frontend ↔ Backend
 
-* [ ] Configurar API Base URL
-* [ ] Criar API client
-* [ ] Criar participant service
+* [x] Configurar API Base URL
+* [x] Criar API client
+* [x] Criar participant service
 * [ ] Criar activity service
 * [ ] Criar ranking service
 * [ ] Criar achievement service
-* [ ] Implementar loading states
-* [ ] Implementar tratamento de erros
-* [ ] Implementar tratamento offline/network
-* [ ] Validar respostas da API
-* [ ] Testar fluxo completo Frontend → API → MongoDB
+* [x] Implementar loading states
+* [x] Implementar tratamento de erros
+* [x] Implementar tratamento offline/network
+* [x] Validar respostas da API (fluxo de participantes)
+* [ ] Testar fluxo completo Frontend → API → MongoDB (falta 4.3 completa)
 
 ---
 
@@ -77,10 +77,10 @@
 
 ## Participante
 
-* [ ] Criar cadastro/identificação
-* [ ] Conectar identificação à API
-* [ ] Persistir participante localmente
-* [ ] Recuperar participante no startup
+* [x] Criar cadastro/identificação
+* [x] Conectar identificação à API
+* [x] Persistir participante localmente
+* [x] Recuperar participante no startup
 
 ## Atividades
 
@@ -103,6 +103,8 @@
 * [ ] Criar tela de conquistas
 * [ ] Exibir conquistas desbloqueadas
 * [ ] Exibir conquistas bloqueadas
+
+> A criação de conquistas será somente via API! Não terá tela
 
 ## Professor/Admin
 

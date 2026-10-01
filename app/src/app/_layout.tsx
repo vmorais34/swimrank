@@ -14,6 +14,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { SessionProvider } from '@/contexts/session-context';
 import { AppThemeProvider, useTheme } from '@/contexts/theme-context';
 
 SplashScreen.preventAutoHideAsync();
@@ -60,9 +61,11 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <AppThemeProvider>
-        <RootNavigator />
-      </AppThemeProvider>
+      <SessionProvider>
+        <AppThemeProvider>
+          <RootNavigator />
+        </AppThemeProvider>
+      </SessionProvider>
     </SafeAreaProvider>
   );
 }

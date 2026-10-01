@@ -1,6 +1,6 @@
 # SwimRank — Status do projeto
 
-> Atualizado em 2026-09-29 (Splash pronta; CORS e filtro de login no backend; API no Render).
+> Atualizado em 2026-09-30 (Identificação do participante pronta e testada; API client + SessionContext).
 > Entrega: **27/10**. Node 24.11.1.
 
 ---
@@ -12,8 +12,8 @@
 | Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Em produção: https://swimrank-api.onrender.com/health. CORS ✅; filtro `?birthdate=` ✅ (ver §4). |
 | Frontend 4.1 Inicialização | ✅ Feito (falta só validar em celular real). |
 | Frontend 4.2 Estrutura / design system | ✅ Feito e validado no navegador (tema claro e escuro). |
-| Frontend 4.3 Telas V1 | ⏳ **Próximo passo.** Por enquanto só existem placeholders "Em construção". |
-| Integração Front ↔ API (seção 11) | ⏳ Não iniciada. Os tipos das respostas já existem em `app/src/types/api.ts`. |
+| Frontend 4.3 Telas V1 | ⏳ Em andamento. Splash, Identificação e Home prontas (ver §3 e `.agents/testes.md`); demais telas ainda são placeholders "Em construção". **Próximo passo: Bloco 4 — Registro de atividade + Histórico.** |
+| Integração Front ↔ API (seção 11) | ⏳ Em andamento: `api.ts` + services de participant, activity (só leitura), training e participant-achievement prontos; falta ranking service e activity create/update. |
 
 ### Forma de trabalho combinada
 - Seguir o `todo.md` **bloco a bloco** e parar ao fim de cada bloco para validação.
@@ -47,24 +47,39 @@ Libs adicionadas: `react-native-svg`, `@react-native-async-storage/async-storage
 app/src/
 ├── app/                      # rotas (Expo Router)
 │   ├── _layout.tsx           # fontes, SafeArea, ThemeProvider, Stack
-│   ├── index.tsx             # Splash: logo SwimRank + "Propriedade" Patrick Esportes → /home ou /identify
+│   ├── index.tsx             # Splash: logo SwimRank + "Propriedade" Patrick Esportes → /home ou /identify (via SessionContext)
 │   ├── design-system.tsx     # catálogo do design system + atalhos (ferramenta de dev)
-│   ├── (auth)/identify.tsx, teacher-login.tsx
+│   ├── (auth)/identify.tsx   # data de nascimento → login direto (1 match) / desempate (>1) / cadastro (0)
+│   ├── (auth)/teacher-login.tsx   # ainda placeholder (Bloco 7)
 │   ├── (app)/_layout.tsx     # tab bar: Início / Registrar / Ranking / Perfil
-│   ├── (app)/home, register, ranking, profile, history*, achievements*   (*fora da tab bar)
+│   ├── (app)/home.tsx        # pontos, distância semana/mês, treino principal, conquistas recentes, CTA registrar
+│   ├── (app)/register, ranking, profile, history*, achievements*   (*fora da tab bar, ainda placeholders)
 │   └── teacher/index.tsx     # área do professor (/teacher)
 ├── components/
 │   ├── ui/                   # design system (barrel em ui/index.ts)
 │   └── placeholder-screen.tsx
-├── contexts/theme-context.tsx   # AppThemeProvider, useTheme(), useAppTheme()
+├── contexts/
+│   ├── theme-context.tsx     # AppThemeProvider, useTheme(), useAppTheme()
+│   └── session-context.tsx   # SessionProvider, useSession() — participante logado (persistido no storage)
+├── services/
+│   ├── api.ts                     # fetch client: timeout, ApiError (corpo `{error,message,details}`), NetworkError (offline/timeout)
+│   ├── participant.service.ts     # findByBirthdate, create, getById
+│   ├── activity.service.ts        # listByParticipant (create vem no Bloco 4)
+│   ├── training.service.ts        # list
+│   └── participant-achievement.service.ts   # listByParticipant
+├── lib/
+│   ├── storage.ts             # wrapper JSON do AsyncStorage + StorageKeys
+│   ├── date.ts                # todayIso, isoDateUTC, weekStartIso (mesma regra de semana do backend)
+│   └── format.ts               # formatDistance (m/km)
 ├── config/env.ts             # EXPO_PUBLIC_API_URL, EXPO_PUBLIC_API_TIMEOUT_MS
-├── lib/storage.ts            # wrapper JSON do AsyncStorage + StorageKeys
 ├── theme/                    # colors (light/dark), typography, spacing, radius, shadows, dimensions
 ├── types/api.ts              # tipos das respostas do backend
 └── hooks/use-color-scheme*.ts
 ```
 
 **Componentes UI:** AppText, Button, TextField, Card (default/highlight/hero), Screen, Header, Avatar, IconBadge, StatusBadge, SegmentedControl, ListRow, Logo, LoadingState, EmptyState, ErrorState, InlineMessage.
+
+**Testes manuais da tela de Identificação:** roteiro em `.agents/testes.md`.
 
 **Rodar:**
 ```bash
@@ -107,14 +122,16 @@ Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swim
 
 1. **Validar a 4.1 no celular:** abrir a URL web pela rede local (IP da máquina) no navegador do celular.
 2. ✅ **Backend:** CORS e filtro `GET /participants?birthdate=` (§4).
-3. **Bloco 2 — 4.3 Splash + Identificação + seções 5 e 12 "Participante":**
-   - ✅ Splash (`index.tsx`): logo SwimRank + "Propriedade" com o logo Patrick Esportes (`assets/images/patrick-esportes.png`, PNG branco transparente gerado do `logo-patrick.jpg` e pintado com `tintColor` do tema). Mínimo de 1,2s; hoje lê o participante direto do storage (trocar pelo SessionContext). Catálogo movido para `/design-system`.
-   - Obs.: `.agents/references/logo-patrick-black.jpg` está corrompido (imagem toda preta).
-   - API client (`src/services/api.ts`: fetch + timeout + erros + offline) e participant service.
-   - SessionContext: participante salvo no AsyncStorage (`StorageKeys.participant`), recuperado no startup, com redirect para `/identify` ou `/home`.
-   - Tela de identificação (data de nascimento → nome se não houver cadastro) + botão de professor.
-4. **Bloco 3 — Home:** saudação, pontos, distância semanal/mensal, conquistas recentes, treino principal da semana, CTA "Registrar treino".
-5. **Bloco 4 — Registro de atividade + Histórico:**
+3. ✅ **Bloco 2 — 4.3 Splash + Identificação + seções 5 e 12 "Participante":**
+   - ✅ Splash (`index.tsx`): logo SwimRank + "Propriedade" com o logo Patrick Esportes. Mínimo de 1,2s; agora usa `useSession()` (SessionContext) em vez de ler o storage direto.
+   - ✅ API client (`src/services/api.ts`: fetch + timeout + `ApiError`/`NetworkError`) e `src/services/participant.service.ts`.
+   - ✅ SessionContext (`src/contexts/session-context.tsx`): participante salvo no AsyncStorage (`StorageKeys.participant`), recuperado no startup, provider adicionado no `_layout.tsx` raiz.
+   - ✅ Tela de identificação (`(auth)/identify.tsx`): data de nascimento (máscara `DD/MM/AAAA`, validada) → 0 resultados pede nome e cadastra, 1 resultado entra direto, >1 mostra lista para escolher (ou "Não encontrei meu nome" → cadastro) + botão "Acessar como professor". Testado manualmente nos 3 casos, temas claro/escuro e erros de validação.
+   - Roteiro de testes manuais: `.agents/testes.md`.
+   - Pendente: `teacher-login.tsx` continua placeholder (é o Bloco 7).
+4. ✅ **Bloco 3 — Home:** saudação, pontos totais (`Participant.points`), distância aprovada da semana/mês (calculada no front a partir de `GET /activities/participant/:id`, sem endpoint de distância mensal no backend), conquistas recentes (`GET /participant-achievements/participant/:id`, top 3), treino principal da semana (`GET /trainings`, filtrado no front por `isMain` + semana atual — sem endpoint de filtro no backend), CTA "Registrar treino" → `/register`. Pull-to-refresh. Novos: `src/lib/date.ts`, `src/lib/format.ts`, `src/services/{activity,training,participant-achievement}.service.ts`.
+   - Roteiro de teste: `.agents/testes.md` §Home.
+5. **Bloco 4 — Registro de atividade + Histórico (próximo):**
    - Só natação.
    - Campos: data, tipo (pré-selecionar o treino principal), distância, tempo.
    - Histórico com StatusBadge.
