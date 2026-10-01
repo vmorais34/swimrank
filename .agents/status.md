@@ -12,7 +12,7 @@
 | Backend (`backend/`) | ✅ Pronto para a V1 (seções 6–10 do `todo.md`). Em produção: https://swimrank-api.onrender.com/health. CORS ✅; filtro `?birthdate=` ✅ (ver §4). |
 | Frontend 4.1 Inicialização | ✅ Feito (falta só validar em celular real). |
 | Frontend 4.2 Estrutura / design system | ✅ Feito e validado no navegador (tema claro e escuro). |
-| Frontend 4.3 Telas V1 | ✅ Todas as telas implementadas (Splash, Identificação, Home, Registro, Histórico, Ranking, Conquistas, Professor — ver §3 e `.agents/testes.md`). Falta só validar o Bloco 7 e a 4.1 em celular real. |
+| Frontend 4.3 Telas V1 | ✅ Todas as telas da 4.3 implementadas (Splash, Identificação, Home, Registro, Histórico, Ranking, Conquistas, Professor — ver §3 e `.agents/testes.md`). Falta validar o Bloco 7 e a 4.1 em celular real. **Pendências soltas (fora do `todo.md` original): tela de Perfil (`profile.tsx`, ainda placeholder) e logout do participante no app web** (ver §6). |
 | Integração Front ↔ API (seção 11) | ✅ Todos os services prontos: participant, activity (leitura + criação + validação), training, participant-achievement, ranking, achievement e auth. |
 
 ### Forma de trabalho combinada
@@ -159,3 +159,12 @@ Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swim
    - Novos: `src/contexts/teacher-session-context.tsx`, `src/services/auth.service.ts`; `activity.service.ts` ganhou `listAll`/`validate`, `participant.service.ts` ganhou `list`.
    - Roteiro de teste: `.agents/testes.md` §Bloco 7.
 9. Todas as telas da seção 4.3 estão implementadas. Falta: validar a 4.1 em celular real (item 1 acima), seção 13 (wireframes/usabilidade — os estados vazio/loading/erro já estão em todas as telas), testes (14) e deploy web (17/18).
+
+---
+
+## 6. Pendências soltas (fora do `todo.md` original)
+
+Anotado em 2026-09-30, a pedido do usuário — ainda não estão em nenhum bloco formal:
+
+1. **Tela de Perfil (`(app)/profile.tsx`):** ainda é placeholder "Em construção". Existe como aba na tab bar (`(app)/_layout.tsx`), mas não tem conteúdo definido no `todo.md`. Precisa decidir o que mostrar (dados do participante, trocar tema, etc.) antes de implementar.
+2. **Logout do participante no app web:** `SessionContext` já tem `signOut()`, mas nenhuma tela chama — não existe botão de "Sair" para o participante em nenhum lugar do app (diferente do professor, que já tem o botão "Sair" em `teacher/index.tsx`). Provavelmente entra na tela de Perfil quando ela for definida.
