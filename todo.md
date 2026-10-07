@@ -359,20 +359,20 @@
 
 ## 14.2 API tests
 
-* [ ] Testar endpoints de participantes
-* [ ] Testar endpoints de atividades
+* [x] Testar endpoints de participantes
+* [x] Testar endpoints de atividades
 * [ ] Testar endpoints de ranking
 * [ ] Testar endpoints de achievements
-* [ ] Testar requisições inválidas
-* [ ] Testar dados ausentes
-* [ ] Testar erros do servidor
+* [x] Testar requisições inválidas
+* [x] Testar dados ausentes
+* [x] Testar erros do servidor
 
 ## 14.3 Integration tests
 
-* [ ] Frontend → API
-* [ ] API → MongoDB
-* [ ] Registro completo de atividade
-* [ ] Fluxo completo de ranking
+* [x] Frontend → API
+* [x] API → MongoDB
+* [x] Registro completo de atividade
+* [x] Fluxo completo de ranking
 * [ ] Fluxo completo de achievement
 
 ## 14.4 Testes manuais
@@ -392,8 +392,8 @@
 
 # 15. Testes com a instituição
 
-* [ ] Preparar ambiente de testes
-* [ ] Criar participantes de teste
+* [x] Preparar ambiente de testes
+* [x] Criar participantes de teste
 * [ ] Definir cenários
 * [ ] Testar com professores
 * [ ] Testar com alunos
@@ -440,9 +440,9 @@
 
 ## Web — V1
 
-* [ ] Disponibilizar MVP através de URL
+* [x] Disponibilizar MVP através de URL
 * [ ] Compartilhar URL com instituição
-* [ ] Validar acesso em dispositivos móveis
+* [x] Validar acesso em dispositivos móveis
 
 ## Android — Futuro
 
@@ -463,21 +463,21 @@
 
 # 19. PEX Documentation
 
-* [ ] Documentar planejamento
-* [ ] Documentar levantamento de requisitos
-* [ ] Documentar decisões técnicas
-* [ ] Documentar desenvolvimento
-* [ ] Documentar implementação
-* [ ] Documentar testes
+* [X] Documentar planejamento
+* [X] Documentar levantamento de requisitos
+* [X] Documentar decisões técnicas
+* [X] Documentar desenvolvimento
+* [X] Documentar implementação
+* [X] Documentar testes
 * [ ] Documentar feedback dos usuários
 * [ ] Documentar diagnóstico técnico
-* [ ] Documentar problemas encontrados
+* [X] Documentar problemas encontrados
 * [ ] Documentar soluções
 * [ ] Documentar aprendizados
 * [ ] Documentar indicadores
 * [ ] Documentar resultados
 * [ ] Documentar limitações
-* [ ] Documentar continuidade
+* [X] Documentar continuidade
 
 ---
 

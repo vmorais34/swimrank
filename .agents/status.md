@@ -166,5 +166,10 @@ Env: copiar `app/.env.example` para `app/.env`. API de produção: `https://swim
 
 Anotado em 2026-09-30, a pedido do usuário — ainda não estão em nenhum bloco formal:
 
-1. **Tela de Perfil (`(app)/profile.tsx`):** ainda é placeholder "Em construção". Existe como aba na tab bar (`(app)/_layout.tsx`), mas não tem conteúdo definido no `todo.md`. Precisa decidir o que mostrar (dados do participante, trocar tema, etc.) antes de implementar.
-2. **Logout do participante no app web:** `SessionContext` já tem `signOut()`, mas nenhuma tela chama — não existe botão de "Sair" para o participante em nenhum lugar do app (diferente do professor, que já tem o botão "Sair" em `teacher/index.tsx`). Provavelmente entra na tela de Perfil quando ela for definida.
+1. ✅ **Tela de Perfil (`(app)/profile.tsx`):** ainda é placeholder "Em construção". Existe como aba na tab bar (`(app)/_layout.tsx`), mas não tem conteúdo definido no `todo.md`. Precisa decidir o que mostrar (dados do participante, trocar tema, etc.) antes de implementar.
+2. ✅ **Logout do participante no app web:** `SessionContext` já tem `signOut()`, mas nenhuma tela chama — não existe botão de "Sair" para o participante em nenhum lugar do app (diferente do professor, que já tem o botão "Sair" em `teacher/index.tsx`). Provavelmente entra na tela de Perfil quando ela for definida.
+3. ✅ **Cadastrar training:** Na tela do teacher precisamos colocar um botão para cair na tela de cadastro de treino para a semana!
+- seguir o padrão do formulário de cadastrar atividade
+- pode ser o btn no footer igual fizemos com registrar ativadade
+4. ✅ **Popup para mostrar as novas conquistas ao logar:** O sistema deverá ao fazer login na home trazer um popup com as novas conquistas desbloqueadas. Atualmente hj apenas temos as conquistas recentes na home.
+Ela irá passar para a aba perfil. E no lugar de onde ficavam as conquistas deverá aparcer a posição no ranking(Semanal);
