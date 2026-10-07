@@ -1,7 +1,7 @@
 # swimrank
 
 Projeto desenvolvido no Projeto de Extensão VI para o parceiro Patrick Esportes.
-O objetivo é fomentar através de estratégoas interativas e motivacionais para aumentar adesão e aproveitamento, além de reduzir a taxa de abandono.
+O objetivo é fomentar através de estratégias interativas e motivacionais para aumentar adesão e aproveitamento, além de reduzir a taxa de abandono.
 
 ## Funcionalidades
 
@@ -32,6 +32,7 @@ obs: **O participante não pode alterar points diretamente.**
 #### Modelo de dados inicial
 O modelo inicial será estruturado de forma simples, contemplando os principais elementos necessários para o funcionamento da gamificação.
 
+```
 User - Admin/Teacher
 ├── _id
 ├── name
@@ -88,3 +89,5 @@ ParticipantAchievement
 ├── achievementId
 ├── unlockedAt
 └── points
+
+```
