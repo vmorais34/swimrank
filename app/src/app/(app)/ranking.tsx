@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText, Card, EmptyState, ErrorState, Header, InlineMessage, ListRow, LoadingState, Screen, SegmentedControl } from '@/components/ui';
@@ -87,27 +87,29 @@ export default function RankingScreen() {
     }
   }, [sessionStatus, participant]);
 
-  useEffect(() => {
-    let active = true;
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
 
-    fetchEntries(period, metric)
-      .then((result) => {
-        if (active) {
-          setEntries(result);
-          setError(null);
-        }
-      })
-      .catch((err) => {
-        if (active) setError(requestErrorMessage(err));
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+      fetchEntries(period, metric)
+        .then((result) => {
+          if (active) {
+            setEntries(result);
+            setError(null);
+          }
+        })
+        .catch((err) => {
+          if (active) setError(requestErrorMessage(err));
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
 
-    return () => {
-      active = false;
-    };
-  }, [period, metric]);
+      return () => {
+        active = false;
+      };
+    }, [period, metric]),
+  );
 
   if (!participant) return null;
 

@@ -1,10 +1,12 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Card, EmptyState, ErrorState, Icon, IconBadge, InlineMessage, ListRow, LoadingState, Screen } from '@/components/ui';
+import { NewAchievementsModal } from '@/components/new-achievements-modal';
+import { AppText, Button, Card, ErrorState, Icon, IconBadge, InlineMessage, ListRow, LoadingState, Screen } from '@/components/ui';
 import { useSession } from '@/contexts/session-context';
 import { useTheme } from '@/contexts/theme-context';
+import { findUnseenAchievements, markAchievementsSeen, populatedAchievements, type UnlockedAchievement } from '@/lib/achievement';
 import { isoDateUTC, todayIso, weekStartIso } from '@/lib/date';
 import { formatDistance } from '@/lib/format';
 import { findMainTraining } from '@/lib/training';
@@ -12,14 +14,17 @@ import { activityService } from '@/services/activity.service';
 import { ApiError, NetworkError } from '@/services/api';
 import { participantAchievementService } from '@/services/participant-achievement.service';
 import { participantService } from '@/services/participant.service';
+import { rankingService } from '@/services/ranking.service';
 import { trainingService } from '@/services/training.service';
-import type { Participant, ParticipantAchievement, Training } from '@/types/api';
+import type { Participant, PointsRankingEntry, Training } from '@/types/api';
 
 interface HomeData {
   participant: Participant;
   weeklyDistance: number;
   monthlyDistance: number;
-  recentAchievements: ParticipantAchievement[];
+  /** null quando o participante ainda não pontuou na semana */
+  weeklyRanking: PointsRankingEntry | null;
+  weeklyRankingTotal: number;
   mainTraining: Training | null;
 }
 
@@ -36,6 +41,7 @@ export default function HomeScreen() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [newAchievements, setNewAchievements] = useState<UnlockedAchievement[]>([]);
 
   /** Busca os dados e atualiza `data`; quem chama controla os flags de loading/refreshing */
   function fetchHome(participantId: string): Promise<void> {
@@ -44,7 +50,8 @@ export default function HomeScreen() {
       activityService.listByParticipant(participantId),
       participantAchievementService.listByParticipant(participantId),
       trainingService.list(),
-    ]).then(([participant, activities, achievements, trainings]) => {
+      rankingService.weekly(todayIso()),
+    ]).then(async ([participant, activities, achievements, trainings, weeklyRanking]) => {
       signIn(participant);
 
       const today = todayIso();
@@ -66,10 +73,24 @@ export default function HomeScreen() {
         participant,
         weeklyDistance,
         monthlyDistance,
-        recentAchievements: achievements.slice(0, 3),
+        weeklyRanking: weeklyRanking.find((entry) => entry.participantId === participant._id) ?? null,
+        weeklyRankingTotal: weeklyRanking.length,
         mainTraining,
       });
+
+      const unseen = await findUnseenAchievements(participant._id, populatedAchievements(achievements));
+      if (unseen.length > 0) setNewAchievements(unseen);
     });
+  }
+
+  function dismissNewAchievements(): Promise<void> {
+    const seen = newAchievements;
+    setNewAchievements([]);
+    return sessionParticipant ? markAchievementsSeen(sessionParticipant._id, seen) : Promise.resolve();
+  }
+
+  function handleSeeAllAchievements() {
+    dismissNewAchievements().then(() => router.push('/achievements'));
   }
 
   function handleRetry() {
@@ -96,24 +117,26 @@ export default function HomeScreen() {
     }
   }, [sessionStatus, sessionParticipant]);
 
-  useEffect(() => {
-    if (!sessionParticipant) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (!sessionParticipant) return;
 
-    let active = true;
+      let active = true;
 
-    fetchHome(sessionParticipant._id)
-      .catch((err) => {
-        if (active) setError(requestErrorMessage(err));
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+      fetchHome(sessionParticipant._id)
+        .catch((err) => {
+          if (active) setError(requestErrorMessage(err));
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
 
-    return () => {
-      active = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionParticipant?._id]);
+      return () => {
+        active = false;
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [sessionParticipant?._id]),
+  );
 
   if (!sessionParticipant) return null;
 
@@ -192,25 +215,45 @@ export default function HomeScreen() {
       </View>
 
       <View style={{ gap: theme.spacing[3] }}>
-        <AppText variant="heading">Conquistas recentes</AppText>
-        {data.recentAchievements.length === 0 ? (
-          <EmptyState icon="trophy" title="Nenhuma conquista ainda" description="Registre treinos para desbloquear conquistas." />
-        ) : (
-          data.recentAchievements.map((entry) => {
-            const achievement = typeof entry.achievementId === 'string' ? null : entry.achievementId;
-            return (
-              <ListRow
-                key={entry._id}
-                title={achievement?.name ?? 'Conquista'}
-                subtitle={achievement?.description}
-                left={<IconBadge name="medal" />}
-              />
-            );
-          })
-        )}
+        <AppText variant="heading">Ranking semanal</AppText>
+        <Card onPress={() => router.push('/ranking')} style={styles.rankingCard}>
+          <IconBadge
+            name="trophy"
+            size={48}
+            iconSize="md"
+            background={theme.colors.semantic.warningBackground}
+            color={theme.colors.ranking.gold}
+          />
+          {data.weeklyRanking ? (
+            <View style={styles.rankingText}>
+              <AppText variant="label" color="secondary">
+                Sua posição
+              </AppText>
+              <AppText variant="heading">
+                {data.weeklyRanking.position}º de {data.weeklyRankingTotal}
+              </AppText>
+              <AppText variant="caption" color="tertiary">
+                {data.weeklyRanking.points} pts essa semana
+              </AppText>
+            </View>
+          ) : (
+            <View style={styles.rankingText}>
+              <AppText variant="bodyStrong">Você ainda não está no ranking</AppText>
+              <AppText variant="caption" color="secondary">
+                Tenha uma atividade aprovada essa semana para pontuar.
+              </AppText>
+            </View>
+          )}
+        </Card>
       </View>
 
       {error && <InlineMessage tone="error" message={error} />}
+
+      <NewAchievementsModal
+        achievements={newAchievements}
+        onClose={dismissNewAchievements}
+        onSeeAll={handleSeeAllAchievements}
+      />
     </Screen>
   );
 }
@@ -223,5 +266,14 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     gap: 4,
+  },
+  rankingCard: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 16,
+  },
+  rankingText: {
+    flex: 1,
+    gap: 2,
   },
 });

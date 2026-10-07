@@ -1,32 +1,24 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { AppText, EmptyState, ErrorState, Header, IconBadge, InlineMessage, ListRow, LoadingState, Screen, type IconName } from '@/components/ui';
+import { AppText, EmptyState, ErrorState, Header, IconBadge, InlineMessage, ListRow, LoadingState, Screen } from '@/components/ui';
 import { useSession } from '@/contexts/session-context';
 import { useTheme } from '@/contexts/theme-context';
+import { populatedAchievements, REQUIREMENT_ICON } from '@/lib/achievement';
 import { formatDateBR } from '@/lib/format';
 import { ApiError, NetworkError } from '@/services/api';
 import { achievementService } from '@/services/achievement.service';
 import { participantAchievementService } from '@/services/participant-achievement.service';
-import type { Achievement, AchievementRequirementType, ParticipantAchievement } from '@/types/api';
+import type { Achievement, ParticipantAchievement } from '@/types/api';
 
 interface AchievementRows {
   unlocked: { achievement: Achievement; unlockedAt: string }[];
   locked: Achievement[];
 }
 
-const REQUIREMENT_ICON: Record<AchievementRequirementType, IconName> = {
-  FIRST_ACTIVITY: 'waves',
-  TOTAL_DISTANCE: 'route',
-  RANKING_POSITION: 'trophy',
-  PARTICIPATION_MONTHS: 'calendar',
-};
-
 function buildRows(all: Achievement[], unlockedEntries: ParticipantAchievement[]): AchievementRows {
-  const unlocked = unlockedEntries
-    .filter((entry): entry is ParticipantAchievement & { achievementId: Achievement } => typeof entry.achievementId !== 'string')
-    .map((entry) => ({ achievement: entry.achievementId, unlockedAt: entry.unlockedAt }));
+  const unlocked = populatedAchievements(unlockedEntries).map((entry) => ({ achievement: entry.achievementId, unlockedAt: entry.unlockedAt }));
 
   const unlockedIds = new Set(unlocked.map((row) => row.achievement._id));
   const locked = all.filter((achievement) => !unlockedIds.has(achievement._id));
@@ -84,30 +76,32 @@ export default function AchievementsScreen() {
     }
   }, [sessionStatus, participant]);
 
-  useEffect(() => {
-    if (!participant) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (!participant) return;
 
-    let active = true;
+      let active = true;
 
-    fetchAchievements(participant._id)
-      .then((result) => {
-        if (active) {
-          setRows(result);
-          setError(null);
-        }
-      })
-      .catch((err) => {
-        if (active) setError(requestErrorMessage(err));
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+      fetchAchievements(participant._id)
+        .then((result) => {
+          if (active) {
+            setRows(result);
+            setError(null);
+          }
+        })
+        .catch((err) => {
+          if (active) setError(requestErrorMessage(err));
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
 
-    return () => {
-      active = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [participant?._id]);
+      return () => {
+        active = false;
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [participant?._id]),
+  );
 
   if (!participant) return null;
 

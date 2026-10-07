@@ -128,7 +128,10 @@ export default function TeacherHomeScreen() {
   if (!session) return null;
 
   return (
-    <Screen refreshing={refreshing} onRefresh={handleRefresh}>
+    <Screen
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
+      footer={<Button title="Cadastrar treino" icon="plusCircle" onPress={() => router.push('/teacher/training')} />}>
       <Header
         title="Atividades pendentes"
         subtitle={session.user.name}

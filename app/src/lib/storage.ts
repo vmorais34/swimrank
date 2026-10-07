@@ -9,6 +9,7 @@ export const StorageKeys = {
   participant: '@swimrank/participant',
   teacherSession: '@swimrank/teacher-session',
   themePreference: '@swimrank/theme-preference',
+  seenAchievements: '@swimrank/seen-achievements',
 } as const;
 
 type StorageKey = (typeof StorageKeys)[keyof typeof StorageKeys];

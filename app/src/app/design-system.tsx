@@ -37,6 +37,8 @@ const routes: { label: string; href: Href }[] = [
   { label: 'Professor', href: '/teacher' },
 ];
 
+const patrickLogo = require('@/assets/images/patrick-esportes.png');
+
 export default function DesignSystemScreen() {
   const { theme, preference, setPreference } = useAppTheme();
   const [period, setPeriod] = useState<'weekly' | 'monthly'>('weekly');
@@ -74,6 +76,10 @@ export default function DesignSystemScreen() {
             />
           ))}
         </View>
+      </Section>
+      
+      <Section title="Logo">
+        <img src={patrickLogo} style={{ width: 200, height: 100 }} />
       </Section>
 
       <Section title="Tipografia">

@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 
 import { EmptyState, ErrorState, Header, InlineMessage, ListRow, LoadingState, Screen, StatusBadge } from '@/components/ui';
 import { useSession } from '@/contexts/session-context';
@@ -51,24 +51,26 @@ export default function HistoryScreen() {
     }
   }, [sessionStatus, participant]);
 
-  useEffect(() => {
-    if (!participant) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (!participant) return;
 
-    let active = true;
+      let active = true;
 
-    fetchHistory(participant._id)
-      .catch((err) => {
-        if (active) setError(requestErrorMessage(err));
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+      fetchHistory(participant._id)
+        .catch((err) => {
+          if (active) setError(requestErrorMessage(err));
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
 
-    return () => {
-      active = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [participant?._id]);
+      return () => {
+        active = false;
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [participant?._id]),
+  );
 
   if (!participant) return null;
 
