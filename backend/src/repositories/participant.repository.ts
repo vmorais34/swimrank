@@ -69,3 +69,16 @@ export async function createParticipant(
 export async function deleteParticipant(id: string) {
   return Participant.findByIdAndDelete(id);
 }
+export async function updateParticipantPoints(
+  id: string,
+  points: number
+) {
+  return Participant.findByIdAndUpdate(
+    id,
+    { points },
+    {
+      returnDocument: 'after',
+      runValidators: true,
+    }
+  );
+}

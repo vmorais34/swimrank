@@ -129,3 +129,25 @@ export async function countApprovedActivitiesByParticipant(
     status: 'APPROVED',
   });
 }
+export async function getApprovedPointsByParticipant(
+  participantId: string
+) {
+  const result = await Activity.aggregate([
+    {
+      $match: {
+        participantId: new Types.ObjectId(participantId),
+        status: 'APPROVED',
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPoints: {
+          $sum: '$points',
+        },
+      },
+    },
+  ]);
+
+  return result[0]?.totalPoints ?? 0;
+}

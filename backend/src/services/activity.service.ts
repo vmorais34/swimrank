@@ -1,5 +1,6 @@
 import * as activityRepository from '../repositories/activity.repository';
 import * as participantRepository from '../repositories/participant.repository';
+import * as participantAchievementRepository from '../repositories/participant-achievement.repository';
 import * as trainingRepository from '../repositories/training.repository';
 import { AppError } from '../errors/app-error';
 
@@ -44,6 +45,26 @@ function getWeekStart(date: Date) {
   );
 
   return weekStart;
+}
+
+// Recalcula o total do participante a partir das atividades aprovadas (mesma base do ranking geral)
+export async function recalculateParticipantPoints(
+  participantId: string
+) {
+  // Total = pontos das atividades aprovadas + pontos das conquistas desbloqueadas
+  const [activityPoints, achievementPoints] = await Promise.all([
+    activityRepository.getApprovedPointsByParticipant(
+      participantId
+    ),
+    participantAchievementRepository.getAchievementPointsByParticipant(
+      participantId
+    ),
+  ]);
+
+  return participantRepository.updateParticipantPoints(
+    participantId,
+    activityPoints + achievementPoints
+  );
 }
 
 // Valida participante antes de criar
@@ -125,6 +146,12 @@ export async function deleteActivity(id: string) {
       'Atividade não encontrada',
       404,
       'ACTIVITY_NOT_FOUND'
+    );
+  }
+
+  if (activity.status === 'APPROVED') {
+    await recalculateParticipantPoints(
+      activity.participantId.toString()
     );
   }
 }
@@ -210,7 +237,12 @@ export async function validateActivity(
     data.status === 'APPROVED' &&
     activity
   ) {
+    // Avalia as conquistas antes de recalcular, para que as recém-desbloqueadas entrem no total
     await evaluateAchievementsForParticipant(
+      existingActivity.participantId.toString()
+    );
+
+    await recalculateParticipantPoints(
       existingActivity.participantId.toString()
     );
   }

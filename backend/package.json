@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/app.js",
-    "seed:admin": "tsx src/scripts/seed-admin.ts"
+    "seed:admin": "tsx src/scripts/seed-admin.ts",
+    "recalc:points": "tsx src/scripts/recalculate-points.ts"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 import { ParticipantAchievement } from '../models/ParticipantAchievement';
 
 interface CreateParticipantAchievementData {
@@ -41,6 +43,28 @@ export async function findByParticipantAndAchievement(
     participantId,
     achievementId,
   });
+}
+
+export async function getAchievementPointsByParticipant(
+  participantId: string
+) {
+  const result = await ParticipantAchievement.aggregate([
+    {
+      $match: {
+        participantId: new Types.ObjectId(participantId),
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPoints: {
+          $sum: '$points',
+        },
+      },
+    },
+  ]);
+
+  return result[0]?.totalPoints ?? 0;
 }
 
 export async function findAllParticipantAchievements() {

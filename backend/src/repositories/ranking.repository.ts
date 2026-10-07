@@ -1,21 +1,56 @@
 import { Activity } from '../models/Activity';
+import { ParticipantAchievement } from '../models/ParticipantAchievement';
 
-//semanal
-export async function findWeeklyRanking(
-  startDate: Date,
-  endDate: Date
-) {
+interface DateRange {
+  startDate: Date;
+  endDate: Date;
+}
+
+/**
+ * Ranking por pontos = pontos das atividades aprovadas (pela data da atividade)
+ * + pontos das conquistas desbloqueadas (pela data de desbloqueio), no período.
+ * Sem período, considera tudo (ranking geral).
+ */
+function findPointsRanking(range?: DateRange) {
+  const period = range
+    ? { $gte: range.startDate, $lt: range.endDate }
+    : undefined;
+
   return Activity.aggregate([
     {
       $match: {
-        date: {
-          $gte: startDate,
-          $lt: endDate,
-        },
         status: 'APPROVED',
         points: {
           $gt: 0,
         },
+        ...(period && { date: period }),
+      },
+    },
+    {
+      $project: {
+        participantId: 1,
+        points: 1,
+      },
+    },
+    {
+      $unionWith: {
+        coll: ParticipantAchievement.collection.name,
+        pipeline: [
+          {
+            $match: {
+              points: {
+                $gt: 0,
+              },
+              ...(period && { unlockedAt: period }),
+            },
+          },
+          {
+            $project: {
+              participantId: 1,
+              points: 1,
+            },
+          },
+        ],
       },
     },
     {
@@ -52,6 +87,14 @@ export async function findWeeklyRanking(
       },
     },
   ]);
+}
+
+//semanal
+export async function findWeeklyRanking(
+  startDate: Date,
+  endDate: Date
+) {
+  return findPointsRanking({ startDate, endDate });
 }
 
 //mensal
@@ -59,100 +102,12 @@ export async function findMonthlyRanking(
   startDate: Date,
   endDate: Date
 ) {
-  return Activity.aggregate([
-    {
-      $match: {
-        date: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-        status: 'APPROVED',
-        points: {
-          $gt: 0,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: '$participantId',
-        points: {
-          $sum: '$points',
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'participants',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'participant',
-      },
-    },
-    {
-      $unwind: '$participant',
-    },
-    {
-      $project: {
-        _id: 0,
-        participantId: '$_id',
-        name: '$participant.name',
-        points: 1,
-      },
-    },
-    {
-      $sort: {
-        points: -1,
-        name: 1,
-      },
-    },
-  ]);
+  return findPointsRanking({ startDate, endDate });
 }
 
 //Geral
 export async function findGeneralRanking() {
-  return Activity.aggregate([
-    {
-      $match: {
-        status: 'APPROVED',
-        points: {
-          $gt: 0,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: '$participantId',
-        points: {
-          $sum: '$points',
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'participants',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'participant',
-      },
-    },
-    {
-      $unwind: '$participant',
-    },
-    {
-      $project: {
-        _id: 0,
-        participantId: '$_id',
-        name: '$participant.name',
-        points: 1,
-      },
-    },
-    {
-      $sort: {
-        points: -1,
-        name: 1,
-      },
-    },
-  ]);
+  return findPointsRanking();
 }
 
 // Distance
