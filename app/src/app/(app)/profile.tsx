@@ -98,7 +98,11 @@ export default function ProfileScreen() {
   if (!participant) return null;
 
   return (
-    <Screen refreshing={refreshing} onRefresh={handleRefresh}>
+    <Screen 
+      refreshing={refreshing} 
+      onRefresh={handleRefresh}
+      footer={<Button title="Atividades" icon="waves" onPress={() => router.push('/history')} />}
+    >
       <Header title="Perfil" onBack={() => router.back()} />
       <View style={styles.row}>
         <AppText variant="overline" color="secondary">

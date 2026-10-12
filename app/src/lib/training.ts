@@ -6,3 +6,7 @@ import { isoDateUTC } from './date';
 export function findMainTraining(trainings: Training[], weekStart: string): Training | null {
   return trainings.find((training) => training.isMain && isoDateUTC(training.date) === weekStart) ?? null;
 }
+
+export function findComplementarTraining(trainings: Training[], weekStart: string): Training | null {
+  return trainings.find((training) => !training.isMain && isoDateUTC(training.date) === weekStart) ?? null;
+}

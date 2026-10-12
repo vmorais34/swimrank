@@ -9,7 +9,7 @@ import { useTheme } from '@/contexts/theme-context';
 import { findUnseenAchievements, markAchievementsSeen, populatedAchievements, type UnlockedAchievement } from '@/lib/achievement';
 import { isoDateUTC, todayIso, weekStartIso } from '@/lib/date';
 import { formatDistance } from '@/lib/format';
-import { findMainTraining } from '@/lib/training';
+import { findMainTraining, findComplementarTraining } from '@/lib/training';
 import { activityService } from '@/services/activity.service';
 import { ApiError, NetworkError } from '@/services/api';
 import { participantAchievementService } from '@/services/participant-achievement.service';
@@ -25,7 +25,10 @@ interface HomeData {
   /** null quando o participante ainda não pontuou na semana */
   weeklyRanking: PointsRankingEntry | null;
   weeklyRankingTotal: number;
+  monthlyRanking?: PointsRankingEntry | null;
+  monthlyRankingTotal?: number;
   mainTraining: Training | null;
+  complementarTraining?: Training | null;
 }
 
 function requestErrorMessage(error: unknown): string {
@@ -51,7 +54,8 @@ export default function HomeScreen() {
       participantAchievementService.listByParticipant(participantId),
       trainingService.list(),
       rankingService.weekly(todayIso()),
-    ]).then(async ([participant, activities, achievements, trainings, weeklyRanking]) => {
+      rankingService.monthly(todayIso()),
+    ]).then(async ([participant, activities, achievements, trainings, weeklyRanking, monthlyRanking]) => {
       signIn(participant);
 
       const today = todayIso();
@@ -68,6 +72,7 @@ export default function HomeScreen() {
         .reduce((total, activity) => total + activity.distance, 0);
 
       const mainTraining = findMainTraining(trainings, weekStart);
+      const complementarTraining = findComplementarTraining(trainings, weekStart);
 
       setData({
         participant,
@@ -75,7 +80,10 @@ export default function HomeScreen() {
         monthlyDistance,
         weeklyRanking: weeklyRanking.find((entry) => entry.participantId === participant._id) ?? null,
         weeklyRankingTotal: weeklyRanking.length,
+        monthlyRanking: monthlyRanking.find((entry) => entry.participantId === participant._id) ?? null,
+        monthlyRankingTotal: monthlyRanking.length,
         mainTraining,
+        complementarTraining,
       });
 
       const unseen = await findUnseenAchievements(participant._id, populatedAchievements(achievements));
@@ -196,6 +204,14 @@ export default function HomeScreen() {
           <AppText variant="heading" color={theme.colors.hero.text}>
             {formatDistance(data.monthlyDistance)}
           </AppText>
+          {data.monthlyRanking &&
+            <View style={styles.row}>
+              <Icon name="trophy" color={theme.colors.hero.text} size={20} />
+              <AppText variant="caption" color={theme.colors.hero.text}>
+                {`${data.monthlyRanking.position}º de ${data.monthlyRankingTotal}`}
+              </AppText>
+            </View>
+          }
         </Card>
       </View>
 
@@ -211,6 +227,16 @@ export default function HomeScreen() {
           <Card>
             <AppText color="secondary">Nenhum treino principal definido para esta semana.</AppText>
           </Card>
+        )}
+        {data.complementarTraining && (
+          <>
+            <AppText variant="bodyStrong">Treino complementar</AppText>
+            <ListRow
+              title={data.complementarTraining.type}
+              subtitle="Treino complementar"
+              left={<IconBadge name="plus" />}
+              />
+          </>
         )}
       </View>
 

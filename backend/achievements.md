@@ -170,6 +170,62 @@ $achievement | ConvertTo-Json -Depth 10
 
 ---
 
+---
+
+# 6.3 5 Km
+
+```powershell
+$body = @{
+  name        = "5 Km"
+  description = "Acumule 5 quilômetros nadados."
+  category    = "DISTANCE"
+  requirement = @{
+    type  = "TOTAL_DISTANCE"
+    value = 5000
+  }
+  points      = 100
+} | ConvertTo-Json -Depth 5
+
+$achievement = Invoke-RestMethod `
+  -Uri "$baseUrl/achievements" `
+  -Method POST `
+  -Headers $adminHeaders `
+  -ContentType "application/json; charset=utf-8" `
+  -Body $body
+
+$achievement | ConvertTo-Json -Depth 10
+```
+
+---
+
+---
+
+# 6.c 10 Km
+
+```powershell
+$body = @{
+  name        = "10 Km"
+  description = "Acumule 10 quilômetros nadados."
+  category    = "DISTANCE"
+  requirement = @{
+    type  = "TOTAL_DISTANCE"
+    value = 10000
+  }
+  points      = 100
+} | ConvertTo-Json -Depth 5
+
+$achievement = Invoke-RestMethod `
+  -Uri "$baseUrl/achievements" `
+  -Method POST `
+  -Headers $adminHeaders `
+  -ContentType "application/json; charset=utf-8" `
+  -Body $body
+
+$achievement | ConvertTo-Json -Depth 10
+```
+
+---
+
 # 7. Canal da Mancha
 
 ```powershell

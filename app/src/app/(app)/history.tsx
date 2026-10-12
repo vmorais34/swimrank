@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { EmptyState, ErrorState, Header, InlineMessage, ListRow, LoadingState, Screen, StatusBadge } from '@/components/ui';
 import { useSession } from '@/contexts/session-context';
-import { formatDateBR, formatDistance, formatDuration } from '@/lib/format';
+import { formatDateBR, formatDistance, formatDuration, formatPace } from '@/lib/format';
 import { activityService } from '@/services/activity.service';
 import { ApiError, NetworkError } from '@/services/api';
 import type { Activity } from '@/types/api';
@@ -23,8 +23,10 @@ export default function HistoryScreen() {
 
   function fetchHistory(participantId: string): Promise<void> {
     return activityService.listByParticipant(participantId).then((result) => {
+      console.log("result", result);
       setActivities(result);
     });
+
   }
 
   function handleRetry() {
@@ -89,7 +91,7 @@ export default function HistoryScreen() {
           <ListRow
             key={activity._id}
             title={formatDateBR(activity.date)}
-            subtitle={`${activity.type} • ${formatDistance(activity.distance)} • ${formatDuration(activity.time)}`}
+            subtitle={`${activity.type} • ${formatDistance(activity.distance)} • ${formatDuration(activity.time)} • ${formatPace(activity.time, activity.distance)} `}
             right={<StatusBadge status={activity.status} />}
           />
         ))

@@ -21,3 +21,18 @@ export function formatDateBR(value: string): string {
   const [year, month, day] = isoDateUTC(value).split('-');
   return `${day}/${month}/${year}`;
 }
+
+/**
+Formata o ritmo de natação como "2:59/100m".
+  @param time Tempo total em segundos.
+  @param distance Distância total em metros.
+*/
+export function formatPace(time: number, distance: number): string {
+if (distance <= 0 || time < 0) return '0:00/100m';
+
+const secondsPer100m = Math.round((time / distance) * 100);
+const minutes = Math.floor(secondsPer100m / 60);
+const seconds = secondsPer100m % 60;
+
+return `${minutes}:${String(seconds).padStart(2, '0')}/100m`;
+}
