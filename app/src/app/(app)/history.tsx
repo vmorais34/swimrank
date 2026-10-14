@@ -23,7 +23,6 @@ export default function HistoryScreen() {
 
   function fetchHistory(participantId: string): Promise<void> {
     return activityService.listByParticipant(participantId).then((result) => {
-      console.log("result", result);
       setActivities(result);
     });
 

@@ -17,6 +17,22 @@ function requestErrorMessage(error: unknown): string {
   return 'Algo deu errado. Tente novamente.';
 }
 
+function normalizeDistance(value: string): number {
+  const text = value.trim().replace(/\s/g, "");
+
+  // Aceita números inteiros: 800, 2000, 20000
+  if (/^\d+$/.test(text)) {
+    return Number(text);
+  }
+
+  // Aceita separadores de milhar: 2.000, 2,000, 20.000
+  if (/^\d{1,3}([.,]\d{3})+$/.test(text)) {
+    return Number(text.replace(/[.,]/g, ""));
+  }
+
+  return Number(text);
+}
+
 export default function RegisterScreen() {
   const theme = useTheme();
   const { participant, status: sessionStatus } = useSession();
@@ -64,7 +80,7 @@ export default function RegisterScreen() {
 
     const iso = digitsToIsoDate(dateDigits, { maxDate: new Date() });
     const trimmedType = type.trim();
-    const distance = Number(distanceText.replace(',', '.'));
+    const distance = normalizeDistance(distanceText);
     const minutes = minutesText.trim() === '' ? 0 : Number(minutesText);
     const seconds = secondsText.trim() === '' ? 0 : Number(secondsText);
     const totalSeconds = minutes * 60 + seconds;
@@ -138,7 +154,7 @@ export default function RegisterScreen() {
         label="Distância (metros)"
         icon="route"
         placeholder="Ex.: 800"
-        keyboardType="decimal-pad"
+        keyboardType="number-pad"
         value={distanceText}
         onChangeText={(text) => {
           setDistanceText(text);
